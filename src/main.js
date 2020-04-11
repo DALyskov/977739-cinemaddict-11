@@ -7,8 +7,9 @@ import {createShowMoreBtnTemplate} from './components/show-more-btn.js';
 import {createListExtraTemplate} from './components/list-extra.js';
 import {createStatisticTemplate} from './components/statistic.js';
 import {createDetailsPopupTemplate} from './components/details-popup.js';
+import {generateFilms} from './mock/film.js';
 
-const FILM_COUNT = 5;
+const FILM_COUNT = 15;
 const FILM_EXTRA_CONTAINER_COUNT = 2;
 const FILM_EXTRA_COUNT = 2;
 const CONTENT_EXTRA_TITLES = [`Top rated`, `Most commented`];
@@ -16,6 +17,9 @@ const CONTENT_EXTRA_TITLES = [`Top rated`, `Most commented`];
 const headerElm = document.querySelector(`.header`);
 const mainElm = document.querySelector(`.main`);
 const footerElm = document.querySelector(`.footer`);
+
+const films = generateFilms(FILM_COUNT);
+// console.dir(films);
 
 const renderTemplate = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -32,7 +36,7 @@ renderTemplate(filmsListElm, createListContainerTemplate());
 const listContainerElm = filmsListElm.querySelector(`.films-list__container`);
 
 for (let i = 0; i < FILM_COUNT; i++) {
-  renderTemplate(listContainerElm, createFilmCardTemplate());
+  renderTemplate(listContainerElm, createFilmCardTemplate(films[i]));
 }
 
 renderTemplate(filmsListElm, createShowMoreBtnTemplate());
@@ -53,9 +57,9 @@ let listConteiners = mainElm.querySelectorAll(`.films-list__container`);
 listConteiners = Array.prototype.slice.call(listConteiners).slice(-2);
 listConteiners.forEach((v) => {
   for (let i = 0; i < FILM_EXTRA_COUNT; i++) {
-    renderTemplate(v, createFilmCardTemplate());
+    renderTemplate(v, createFilmCardTemplate(films[i]));
   }
 });
 
 renderTemplate(footerElm, createStatisticTemplate());
-renderTemplate(footerElm, createDetailsPopupTemplate(), `afterend`);
+// renderTemplate(footerElm, createDetailsPopupTemplate(films[0]), `afterend`);
