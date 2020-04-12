@@ -1,3 +1,5 @@
+import {getRndArrFromArr, getRandomIntegerNumber} from '../utils.js';
+
 const films = [
   {
     title: `The Dance of Life`,
@@ -73,33 +75,29 @@ const actors = [`Erich von Stroheim`, `Mary Beth Hughes`, `Dan Duryea`];
 const countries = [`USA`, `Russia`, `ABH`, `BGR`, `EGY`];
 const ageRatings = [`18+`, `PG-13`, `G`, `PG`, `NC-17`];
 
-const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
+const emotions = [`smile`, `sleeping`, `puke`, `angry`];
 
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
   return array[randomIndex];
 };
 
-const getRndArrFromArr = (arr, length = arr.length) => {
-  if (length > arr.length) {
-    length = arr.length;
-  }
-  let newArr = arr.slice();
-  for (let i = newArr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-  }
-  newArr = newArr.slice(0, length);
-  return newArr;
+const generateComent = () => {
+  const emotion = getRandomArrayItem(emotions);
+  return {
+    author: emotion,
+    emotion,
+    date: new Date(),
+    content: getRndArrFromArr(emotions,
+        getRandomIntegerNumber(2, emotions.length)).join(`, `),
+  };
 };
 
 const generateFilm = () => {
   const film = getRandomArrayItem(films);
-  film.genres = new Set([...film.genres, ...getRndArrFromArr(genres)]);
+  film.genres = new Set([...film.genres, ...getRndArrFromArr(genres, 1)]);
   film.genres = Array.from(film.genres);
-  film.description = film.description + ` ${getRndArrFromArr(descriptionItems).join(` `)}`;
+  film.description = film.description + ` ${getRndArrFromArr(descriptionItems, getRandomIntegerNumber(0, 5)).join(` `)}`;
   film.rating = Math.floor(Math.random() * 100) / 10;
   film.releaseDate = new Date(film.releaseDate instanceof Date ?
     film.releaseDate.getFullYear()
@@ -110,7 +108,7 @@ const generateFilm = () => {
   film.actors = getRndArrFromArr(actors, getRandomIntegerNumber(1, actors.length));
   film.country = getRndArrFromArr(countries, 1);
   film.ageRating = getRndArrFromArr(ageRatings, 1);
-
+  film.coments = new Array(getRandomIntegerNumber(0, 5)).fill(``).map(generateComent);
   return film;
 };
 
@@ -120,6 +118,4 @@ const generateFilms = (count) => {
     .map(generateFilm);
 };
 
-// title, genres, poster, description, rating, duration, releaseDate
-
-export {generateFilms};
+export {generateFilms, films};

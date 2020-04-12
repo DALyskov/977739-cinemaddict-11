@@ -1,6 +1,8 @@
-const createStatisticTemplate = () => {
+const createStatisticTemplate = (countFilms) => {
+  // countFilms = String(countFilms).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, `$1 `);
+  countFilms = countFilms.toLocaleString();
   return (
-    `<p>130 291 movies inside</p>`
+    `<p>${countFilms} movies inside</p>`
   );
 };
 

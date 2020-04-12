@@ -1,15 +1,14 @@
 const createFilmCardTemplate = (film) => {
-  const {title, genres, poster, description, rating, duration, releaseDate} = film;
+  const {title, genres, poster, description, rating, duration, releaseDate, coments} = film;
 
   const genre = genres[0];
   const releaseYear = releaseDate.getFullYear();
+  const commentsCount = coments.length;
 
   let reducedDescription = description;
   if (description.length > 140) {
     reducedDescription = description.slice(0, 139).concat(`\u{2026}`);
   }
-
-  const commentsCount = 5;
 
   return (
     `<article class="film-card">
