@@ -1,3 +1,5 @@
+const ESC_KEYCODE = 27;
+
 const getRndArrFromArr = (array, length = array.length) => {
   if (length > array.length) {
     length = array.length;
@@ -15,4 +17,17 @@ const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
-export {getRndArrFromArr, getRandomIntegerNumber};
+const createElm = (template) => {
+  const newElm = document.createElement(`div`);
+  newElm.innerHTML = template;
+
+  return newElm.firstChild;
+};
+
+const checkKeyCode = (cb, evt) => {
+  if (evt.keyCode === ESC_KEYCODE) {
+    cb(evt);
+  }
+};
+
+export {getRndArrFromArr, getRandomIntegerNumber, createElm, checkKeyCode};
