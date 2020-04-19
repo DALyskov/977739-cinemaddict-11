@@ -1,3 +1,5 @@
+import {createElm} from '../utils.js';
+
 const MONTH_NAMES = [
   `January`,
   `February`,
@@ -45,7 +47,7 @@ const createComments = (coments) => {
   );
 };
 
-const createDetailsPopupTemplate = (film) => {
+const createFilmPopupTemplate = (film) => {
   const {title, genres, poster, description, rating, duration, releaseDate, originTitle, director, writers, actors, country, ageRating, coments} = film;
 
   const releaseDateString = `${releaseDate.getDate()} ${MONTH_NAMES[releaseDate.getMonth()]} ${releaseDate.getFullYear()}`;
@@ -186,4 +188,24 @@ const createDetailsPopupTemplate = (film) => {
   );
 };
 
-export {createDetailsPopupTemplate};
+export default class FilmPopup {
+  constructor(film) {
+    this._film = film;
+    this._elm = null;
+  }
+
+  getTemplate() {
+    return createFilmPopupTemplate(this._film);
+  }
+
+  getElm() {
+    if (!this._elm) {
+      this._elm = createElm(this.getTemplate());
+    }
+    return this._elm;
+  }
+
+  removeElm() {
+    this._elm = null;
+  }
+}

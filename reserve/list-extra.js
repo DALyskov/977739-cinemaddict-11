@@ -1,18 +1,20 @@
 import {createElm} from '../utils.js';
 
-const createShowMoreBtnTemplate = () => {
+const createListExtraTemplate = () => {
   return (
-    `<button class="films-list__show-more">Show more</button>`
+    `<section class="films-list--extra">
+      <h2 class="films-list__title"></h2>
+    </section>`
   );
 };
 
-export default class ShowMoreBtn {
+export default class ListExtra {
   constructor() {
     this._elm = null;
   }
 
   getTemplate() {
-    return createShowMoreBtnTemplate();
+    return createListExtraTemplate();
   }
 
   getElm() {
