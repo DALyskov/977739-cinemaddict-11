@@ -1,8 +1,4 @@
 const ESC_KEYCODE = 27;
-const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
 
 const getRndArrFromArr = (array, length = array.length) => {
   if (length > array.length) {
@@ -21,24 +17,6 @@ const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
-const createElm = (template) => {
-  const newElm = document.createElement(`div`);
-  newElm.innerHTML = template;
-
-  return newElm.firstChild;
-};
-
-const renderElm = (container, elm, place = `beforeend`) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(elm);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(elm);
-      break;
-  }
-};
-
 const checkKeyCode = (cb, evt) => {
   if (evt.keyCode === ESC_KEYCODE) {
     cb(evt);
@@ -46,10 +24,7 @@ const checkKeyCode = (cb, evt) => {
 };
 
 export {
-  RenderPosition,
   getRndArrFromArr,
   getRandomIntegerNumber,
-  createElm,
-  renderElm,
   checkKeyCode,
 };

@@ -8,15 +8,16 @@ import MainNavComponent from './components/main-nav.js';
 import ProfileComponent from './components/profile.js';
 import ShowMoreBtnComponent from './components/show-more-btn.js';
 import SortingComponent from './components/sorting.js';
+import PageController from './controllers/page.js';
 import {generateFilms} from './mock/film.js';
 import {generateFilters} from './mock/filter.js';
 import {generateStat} from './mock/stat.js';
-import {RenderPosition, getRndArrFromArr, renderElm, checkKeyCode} from './utils.js';
+import {getRndArrFromArr, checkKeyCode} from './utils/common.js';
+import {RenderPosition, render, remove} from './utils/render.js';
 
 const FILM_COUNT = 10;
 const SHOWING_FILM_COUNT_ON_START = 5;
 const SHOWING_FILM_COUNT_BY_BUTTON = 5;
-// const CONTENT_EXTRA_TITLES = [`Top rated`, `Most commented`];
 const FILM_EXTRA_COUNT = 2;
 
 const headerElm = document.querySelector(`.header`);
@@ -43,6 +44,7 @@ const renderFilm = (container, film) => {
   const filmCardComponent = new FilmCardComponent(film);
 
   const onFilmClick = (evt) => {
+    evt.preventDefault();
     const filmCardImg = filmCardComponent.getElm().querySelector(`.film-card__poster`);
     const filmCardTitle = filmCardComponent.getElm().querySelector(`.film-card__title`);
     const filmCardRating = filmCardComponent.getElm().querySelector(`.film-card__rating`);
@@ -51,30 +53,28 @@ const renderFilm = (container, film) => {
     }
 
     const filmPopupComponent = new FilmPopupComponent(film);
-    const popupCloseBtn = filmPopupComponent.getElm().querySelector(`.film-details__close-btn`);
 
     const onCloseBtnClick = () => {
-      filmPopupComponent.getElm().remove();
-      filmPopupComponent.removeElm();
+      remove(filmPopupComponent);
       document.removeEventListener(`keydown`, onEscKeydown);
     };
 
     const onEscKeydown = (keydownEvt) => checkKeyCode(onCloseBtnClick, keydownEvt);
 
-    popupCloseBtn.addEventListener(`click`, onCloseBtnClick);
+    filmPopupComponent.setCloseBtnClickHendler(onCloseBtnClick);
     document.addEventListener(`keydown`, onEscKeydown);
 
-    renderElm(footerElm, filmPopupComponent.getElm(), RenderPosition.AFTERBEGIN);
+    render(footerElm, filmPopupComponent, RenderPosition.AFTERBEGIN);
   };
 
-  filmCardComponent.getElm().addEventListener(`click`, onFilmClick);
+  filmCardComponent.setClickHandler(onFilmClick);
 
-  renderElm(container, filmCardComponent.getElm());
+  render(container, filmCardComponent);
 };
 
 const renderFilms = (container, sortedFilms) => {
   const listContainerComponent = new ListContainerComponent();
-  renderElm(container, listContainerComponent.getElm());
+  render(container, listContainerComponent);
 
   let showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
 
@@ -82,9 +82,9 @@ const renderFilms = (container, sortedFilms) => {
   forEach((film) => renderFilm(listContainerComponent.getElm(), film));
 
   const showMoreBtnComponent = new ShowMoreBtnComponent();
-  renderElm(filmList, showMoreBtnComponent.getElm());
+  render(filmList, showMoreBtnComponent);
 
-  showMoreBtnComponent.getElm().addEventListener(`click`, () => {
+  showMoreBtnComponent.setClickHendler(() => {
     const prevFilmsCount = showingFilmsCount;
     showingFilmsCount = showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
 
@@ -92,33 +92,32 @@ const renderFilms = (container, sortedFilms) => {
     .forEach((film) => renderFilm(listContainerComponent.getElm(), film));
 
     if (showingFilmsCount >= sortedFilms.length) {
-      showMoreBtnComponent.getElm().remove();
-      showMoreBtnComponent.removeElm();
+      remove(showMoreBtnComponent);
     }
   });
 };
 
 const renderFilmsExtra = (container, sortedFilms) => {
   const listContainerComponent = new ListContainerComponent();
-  renderElm(container.getElm(), listContainerComponent.getElm());
+  render(container.getElm(), listContainerComponent);
 
   sortedFilms.slice(0, FILM_EXTRA_COUNT).
   forEach((film) => renderFilm(listContainerComponent.getElm(), film));
 };
 
-renderElm(headerElm, new ProfileComponent(stat.watchlist.size).getElm());
-renderElm(mainElm, new MainNavComponent(filters).getElm(), RenderPosition.AFTERBEGIN);
-renderElm(mainElm, new SortingComponent().getElm());
+render(headerElm, new ProfileComponent(stat.watchlist.size));
+render(mainElm, new MainNavComponent(filters), RenderPosition.AFTERBEGIN);
+render(mainElm, new SortingComponent());
 
 const filmsListComponent = new FilmListComponent();
 const filmList = filmsListComponent.getElm().querySelector(`.films-list`);
-renderElm(mainElm, filmsListComponent.getElm());
+render(mainElm, filmsListComponent);
 
 renderFilms(filmList, films);
 
 constentExtraType.forEach((title, sortingType) => {
   const listExtraComponent = new ListExtraComponent(title);
-  renderElm(filmsListComponent.getElm(), listExtraComponent.getElm());
+  render(filmsListComponent.getElm(), listExtraComponent);
 
   const newFilms = getRndArrFromArr(films);
   newFilms.sort((a, b) => {
@@ -130,4 +129,4 @@ constentExtraType.forEach((title, sortingType) => {
   renderFilmsExtra(listExtraComponent, newFilms);
 });
 
-renderElm(footerElm, new FooterStatisticsComponent(FILM_COUNT).getElm());
+render(footerElm, new FooterStatisticsComponent(FILM_COUNT));

@@ -1,4 +1,4 @@
-import {createElm} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createFilterMarkup = (filter) => {
   const {name, count} = filter;
@@ -22,24 +22,13 @@ const createMainNavTemplate = (filters) => {
   );
 };
 
-export default class MainNav {
+export default class MainNav extends AbstractComponent {
   constructor(filters) {
+    super();
     this._filters = filters;
-    this._elm = null;
   }
 
   getTemplate() {
     return createMainNavTemplate(this._filters);
-  }
-
-  getElm() {
-    if (!this._elm) {
-      this._elm = createElm(this.getTemplate());
-    }
-    return this._elm;
-  }
-
-  removeElm() {
-    this._elm = null;
   }
 }

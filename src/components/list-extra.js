@@ -1,18 +1,6 @@
-import {createElm} from '../utils.js';
-
-// const CONTENT_EXTRA_TITLES = [`Top rated`, `Most commented`];
-
-// const createListExtraMarkup = (title) => {
-//   return (
-//     `<section class="films-list--extra">
-//       <h2 class="films-list__title">${title}</h2>
-//     </section>`
-//   );
-// };
+import AbstractComponent from './abstract-component.js';
 
 const createListExtraTemplate = (title) => {
-  // const ListExtraMarkup = CONTENT_EXTRA_TITLES.map((v) => createListExtraMarkup(v)).join(`\n`);
-  // return ListExtraMarkup;
   return (
     `<section class="films-list--extra">
       <h2 class="films-list__title">${title}</h2>
@@ -20,26 +8,13 @@ const createListExtraTemplate = (title) => {
   );
 };
 
-export default class ListExtra {
+export default class ListExtra extends AbstractComponent {
   constructor(title) {
+    super();
     this._title = title;
-    this._elm = null;
   }
 
   getTemplate() {
     return createListExtraTemplate(this._title);
-  }
-
-  getElm() {
-    if (!this._elm) {
-      this._elm = createElm(this.getTemplate());
-    }
-    // console.log(this.getTemplate());
-    // console.log(this._elm);
-    return this._elm;
-  }
-
-  removeElm() {
-    this._elm = null;
   }
 }

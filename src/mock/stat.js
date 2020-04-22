@@ -1,5 +1,5 @@
 import {films} from './film.js';
-import {getRndArrFromArr, getRandomIntegerNumber} from '../utils.js';
+import {getRndArrFromArr, getRandomIntegerNumber} from '../utils/common.js';
 
 const generateStat = () => {
   return {
