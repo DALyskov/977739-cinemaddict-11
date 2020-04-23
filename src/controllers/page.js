@@ -59,16 +59,17 @@ const renderFilms = (container, popupContainer, sortedFilms, showingFilmsCount) 
 };
 
 export default class PageController {
-  constructor(container, popupContainer) {
+  constructor(container, popupContainer, films) {
     this._container = container;
     this._popupContainer = popupContainer;
+    this._films = films;
 
     this._sortingComponent = new SortingComponent();
-    this._filmsListComponent = new FilmListComponent();
+    this._filmsListComponent = new FilmListComponent(this._films);
     this._showMoreBtnComponent = new ShowMoreBtnComponent();
   }
 
-  render(films) {
+  render() {
     let showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
 
     render(this._container, this._sortingComponent);
@@ -76,17 +77,21 @@ export default class PageController {
 
     render(this._container, this._filmsListComponent);
 
-    renderFilms(filmList, this._popupContainer, films, showingFilmsCount);
+    if (this._films.length === 0) {
+      return;
+    }
+
+    renderFilms(filmList, this._popupContainer, this._films, showingFilmsCount);
     const listContainer = filmList.querySelector(`.films-list__container`);
 
     this._showMoreBtnComponent.setClickHendler(() => {
       const prevFilmsCount = showingFilmsCount;
       showingFilmsCount = showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
 
-      films.slice(prevFilmsCount, showingFilmsCount)
+      this._films.slice(prevFilmsCount, showingFilmsCount)
       .forEach((film) => renderFilm(listContainer, this._popupContainer, film));
 
-      if (showingFilmsCount >= films.length) {
+      if (showingFilmsCount >= this._films.length) {
         remove(this._showMoreBtnComponent);
       }
     });
@@ -96,7 +101,7 @@ export default class PageController {
       const listExtraComponent = new ListExtraComponent(title);
       render(this._filmsListComponent.getElm(), listExtraComponent);
 
-      const newFilms = getRndArrFromArr(films);
+      const newFilms = getRndArrFromArr(this._films);
       newFilms.sort((a, b) => {
         a = a[sortingType].length || a[sortingType];
         b = b[sortingType].length || b[sortingType];

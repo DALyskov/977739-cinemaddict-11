@@ -28,7 +28,7 @@ const filters = generateFilters().map((filter) => {
 render(headerElm, new ProfileComponent(stat.watchlist.size));
 render(mainElm, new MainNavComponent(filters), RenderPosition.AFTERBEGIN);
 
-const pageController = new PageController(mainElm, footerElm);
-pageController.render(films);
+const pageController = new PageController(mainElm, footerElm, films);
+pageController.render();
 
 render(footerElm, new FooterStatisticsComponent(FILM_COUNT));
