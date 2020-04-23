@@ -1,7 +1,6 @@
 import FooterStatisticsComponent from './components/footer-statistics.js';
 import MainNavComponent from './components/main-nav.js';
 import ProfileComponent from './components/profile.js';
-// import SortingComponent from './components/sorting.js';
 import PageController from './controllers/page.js';
 import {generateFilms} from './mock/film.js';
 import {generateFilters} from './mock/filter.js';
@@ -28,7 +27,6 @@ const filters = generateFilters().map((filter) => {
 
 render(headerElm, new ProfileComponent(stat.watchlist.size));
 render(mainElm, new MainNavComponent(filters), RenderPosition.AFTERBEGIN);
-// render(mainElm, new SortingComponent());
 
 const pageController = new PageController(mainElm, footerElm);
 pageController.render(films);

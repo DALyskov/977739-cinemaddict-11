@@ -54,54 +54,9 @@ const renderFilms = (container, popupContainer, sortedFilms, showingFilmsCount) 
   const listContainerComponent = new ListContainerComponent();
   render(container, listContainerComponent);
 
-  // let showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
-
   sortedFilms.slice(0, showingFilmsCount).
   forEach((film) => renderFilm(listContainerComponent.getElm(), popupContainer, film));
-
-  // const showMoreBtnComponent = new ShowMoreBtnComponent();
-  // render(container, showMoreBtnComponent);
-
-  // showMoreBtnComponent.setClickHendler(() => {
-  //   const prevFilmsCount = showingFilmsCount;
-  //   showingFilmsCount = showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
-
-  //   sortedFilms.slice(prevFilmsCount, showingFilmsCount)
-  //   .forEach((film) => renderFilm(listContainerComponent.getElm(), popupContainer, film));
-
-  //   if (showingFilmsCount >= sortedFilms.length) {
-  //     remove(showMoreBtnComponent);
-  //   }
-  // });
 };
-
-// const renderFilmsExtra = (container, popupContainer, sortedFilms) => {
-//   const listContainerComponent = new ListContainerComponent();
-//   render(container.getElm(), listContainerComponent);
-
-//   sortedFilms.slice(0, FILM_EXTRA_COUNT).
-//   forEach((film) => renderFilm(listContainerComponent.getElm(), popupContainer, film));
-// };
-
-// const filmsListComponent = new FilmListComponent();
-// const filmList = filmsListComponent.getElm().querySelector(`.films-list`);
-// render(mainElm, filmsListComponent);
-
-// renderFilms(filmList, films);
-
-// constentExtraType.forEach((title, sortingType) => {
-//   const listExtraComponent = new ListExtraComponent(title);
-//   render(filmsListComponent.getElm(), listExtraComponent);
-
-//   const newFilms = getRndArrFromArr(films);
-//   newFilms.sort((a, b) => {
-//     a = a[sortingType].length || a[sortingType];
-//     b = b[sortingType].length || b[sortingType];
-//     return b - a;
-//   });
-
-//   renderFilmsExtra(listExtraComponent, newFilms);
-// });
 
 export default class PageController {
   constructor(container, popupContainer) {
@@ -114,12 +69,12 @@ export default class PageController {
   }
 
   render(films) {
-    render(this._container, this._sortingComponent);
-
-    const filmList = this._filmsListComponent.getElm().querySelector(`.films-list`);
-    render(this._container, this._filmsListComponent);
-
     let showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
+
+    render(this._container, this._sortingComponent);
+    const filmList = this._filmsListComponent.getElm().querySelector(`.films-list`);
+
+    render(this._container, this._filmsListComponent);
 
     renderFilms(filmList, this._popupContainer, films, showingFilmsCount);
     const listContainer = filmList.querySelector(`.films-list__container`);
@@ -148,7 +103,6 @@ export default class PageController {
         return b - a;
       });
 
-      // renderFilmsExtra(listExtraComponent, this._popupContainer, newFilms);
       renderFilms(listExtraComponent.getElm(), this._popupContainer, newFilms, FILM_EXTRA_COUNT);
     });
   }
