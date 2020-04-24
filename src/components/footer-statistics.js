@@ -1,4 +1,4 @@
-import {createElm} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createFooterStatisticsTemplate = (countFilms) => {
   // countFilms = String(countFilms).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, `$1 `);
@@ -8,24 +8,13 @@ const createFooterStatisticsTemplate = (countFilms) => {
   );
 };
 
-export default class FooterStatistics {
+export default class FooterStatistics extends AbstractComponent {
   constructor(countFilms) {
+    super();
     this._countFilms = countFilms;
-    this._elm = null;
   }
 
   getTemplate() {
     return createFooterStatisticsTemplate(this._countFilms);
-  }
-
-  getElm() {
-    if (!this._elm) {
-      this._elm = createElm(this.getTemplate());
-    }
-    return this._elm;
-  }
-
-  removeElm() {
-    this._elm = null;
   }
 }

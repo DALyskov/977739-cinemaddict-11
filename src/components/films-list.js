@@ -1,32 +1,22 @@
-import {createElm} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
-const createFilmsListTemplate = () => {
+const createFilmsListTemplate = (films) => {
   return (
     `<section class="films">
-      <section class="films-list">
-        <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+      <section class="films-list">${films.length !== 0 ?
+      `<h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>`
+      : `<h2 class="films-list__title">There are no movies in our database</h2>`}
       </section>
     </section>`
   );
 };
 
-export default class FilmList {
-  constructor() {
-    this._elm = null;
+export default class FilmList extends AbstractComponent {
+  constructor(films) {
+    super();
+    this._films = films;
   }
-
   getTemplate() {
-    return createFilmsListTemplate();
-  }
-
-  getElm() {
-    if (!this._elm) {
-      this._elm = createElm(this.getTemplate());
-    }
-    return this._elm;
-  }
-
-  removeElm() {
-    this._elm = null;
+    return createFilmsListTemplate(this._films);
   }
 }

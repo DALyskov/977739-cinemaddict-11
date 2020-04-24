@@ -1,4 +1,4 @@
-import {getRndArrFromArr, getRandomIntegerNumber} from '../utils.js';
+import {getRndArrFromArr, getRandomIntegerNumber} from '../utils/common.js';
 
 const films = [
   {
@@ -108,7 +108,7 @@ const generateFilm = () => {
   film.actors = getRndArrFromArr(actors, getRandomIntegerNumber(1, actors.length));
   film.country = getRndArrFromArr(countries, 1);
   film.ageRating = getRndArrFromArr(ageRatings, 1);
-  film.coments = new Array(getRandomIntegerNumber(0, 10)).fill(``).map(generateComent);
+  film.coments = new Array(getRandomIntegerNumber(0, 5)).fill(``).map(generateComent);
   return film;
 };
 

@@ -1,4 +1,4 @@
-import {createElm} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const MONTH_NAMES = [
   `January`,
@@ -188,24 +188,18 @@ const createFilmPopupTemplate = (film) => {
   );
 };
 
-export default class FilmPopup {
+export default class FilmPopup extends AbstractComponent {
   constructor(film) {
+    super();
     this._film = film;
-    this._elm = null;
   }
 
   getTemplate() {
     return createFilmPopupTemplate(this._film);
   }
 
-  getElm() {
-    if (!this._elm) {
-      this._elm = createElm(this.getTemplate());
-    }
-    return this._elm;
-  }
-
-  removeElm() {
-    this._elm = null;
+  setCloseBtnClickHendler(handler) {
+    this.getElm().querySelector(`.film-details__close-btn`).
+    addEventListener(`click`, handler);
   }
 }

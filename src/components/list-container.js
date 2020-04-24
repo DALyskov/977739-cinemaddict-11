@@ -1,4 +1,4 @@
-import {createElm} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const createListContainerTemplate = () => {
   return (
@@ -6,23 +6,9 @@ const createListContainerTemplate = () => {
   );
 };
 
-export default class ListContainer {
-  constructor() {
-    this._elm = null;
-  }
+export default class ListContainer extends AbstractComponent {
 
   getTemplate() {
     return createListContainerTemplate();
-  }
-
-  getElm() {
-    if (!this._elm) {
-      this._elm = createElm(this.getTemplate());
-    }
-    return this._elm;
-  }
-
-  removeElm() {
-    this._elm = null;
   }
 }

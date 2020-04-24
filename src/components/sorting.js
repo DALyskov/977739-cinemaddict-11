@@ -1,4 +1,4 @@
-import {createElm} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const sortingNames = [`default`, `date`, `rating`];
 
@@ -19,23 +19,9 @@ const createSortingTemplate = () => {
   );
 };
 
-export default class Sorting {
-  constructor() {
-    this._elm = null;
-  }
+export default class Sorting extends AbstractComponent {
 
   getTemplate() {
     return createSortingTemplate();
-  }
-
-  getElm() {
-    if (!this._elm) {
-      this._elm = createElm(this.getTemplate());
-    }
-    return this._elm;
-  }
-
-  removeElm() {
-    this._elm = null;
   }
 }

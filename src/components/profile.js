@@ -1,4 +1,4 @@
-import {createElm} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const ranckProfileListDict = {
   0: `Novice`,
@@ -22,24 +22,13 @@ const createProfileTemplate = (watchlistSize) => {
   );
 };
 
-export default class Profile {
+export default class Profile extends AbstractComponent {
   constructor(watchlistSize) {
+    super();
     this._watchlistSize = watchlistSize;
-    this._elm = null;
   }
 
   getTemplate() {
     return createProfileTemplate(this._watchlistSize);
-  }
-
-  getElm() {
-    if (!this._elm) {
-      this._elm = createElm(this.getTemplate());
-    }
-    return this._elm;
-  }
-
-  removeElm() {
-    this._elm = null;
   }
 }
