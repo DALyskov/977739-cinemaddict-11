@@ -8,7 +8,7 @@ import {generateStat} from './mock/stat.js';
 
 import {RenderPosition, render} from './utils/render.js';
 
-const FILM_COUNT = 10;
+const FILM_COUNT = 5;
 
 const headerElm = document.querySelector(`.header`);
 const mainElm = document.querySelector(`.main`);
