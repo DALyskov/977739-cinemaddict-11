@@ -1,5 +1,5 @@
-import {getRndArrFromArr, checkKeyCode} from '../utils/common.js';
-import {RenderPosition, render, remove} from '../utils/render.js';
+import {getRndArrFromArr} from '../utils/common.js';
+import {render, remove} from '../utils/render.js';
 
 import FilmListComponent from '../components/films-list.js';
 import ListContainerComponent from '../components/list-container.js';
@@ -14,7 +14,7 @@ const SHOWING_FILM_COUNT_ON_START = 5;
 const SHOWING_FILM_COUNT_BY_BUTTON = 5;
 const FILM_EXTRA_COUNT = 2;
 
-const constentExtraType = new Map([
+const contentExtraType = new Map([
   [`rating`, `Top rated`],
   [`coments`, `Most commented`]
 ]);
@@ -42,6 +42,7 @@ export default class PageController {
     this._container = container;
     this._popupContainer = popupContainer;
     this._films = films;
+    this._showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
 
     this._sortingComponent = new SortingComponent();
     this._filmsListComponent = new FilmListComponent(this._films);
@@ -53,8 +54,6 @@ export default class PageController {
   }
 
   render() {
-    let showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
-
     render(this._container, this._sortingComponent);
     const filmList = this._filmsListComponent.getElm().querySelector(`.films-list`);
 
@@ -64,34 +63,49 @@ export default class PageController {
       return;
     }
 
-    const newFilms = renderFilms(filmList, this._popupContainer, this._films.slice(0, showingFilmsCount), this._onDataChange, this._onViewChange);
+    const newFilms = renderFilms(filmList, this._popupContainer, this._films.slice(0, this._showingFilmsCount), this._onDataChange, this._onViewChange);
     this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
 
-    const listContainer = filmList.querySelector(`.films-list__container`);
+    this._renderShowMoreBtn(filmList);
+    this._renderListExtra();
+  }
+
+  _renderShowMoreBtn(container) {
+    if (this._showingFilmsCount >= this._films.length) {
+      return;
+    }
+
+    const listContainer = container.querySelector(`.films-list__container`);
 
     this._showMoreBtnComponent.setClickHendler(() => {
-      const prevFilmsCount = showingFilmsCount;
-      showingFilmsCount = showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
+      const prevFilmsCount = this._showingFilmsCount;
+      this._showingFilmsCount = this._showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
 
-      const newFilms = renderFilms(listContainer, this._popupContainer, this._films.slice(prevFilmsCount, showingFilmsCount), this._onDataChange, this._onViewChange, false);
+      const newFilms = renderFilms(listContainer, this._popupContainer, this._films.slice(prevFilmsCount, this._showingFilmsCount), this._onDataChange, this._onViewChange, false);
       this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
 
-      if (showingFilmsCount >= this._films.length) {
+      if (this._showingFilmsCount >= this._films.length) {
         remove(this._showMoreBtnComponent);
       }
     });
-    render(filmList, this._showMoreBtnComponent);
+    render(container, this._showMoreBtnComponent);
+  }
 
-    constentExtraType.forEach((title, sortingType) => {
-      const listExtraComponent = new ListExtraComponent(title);
-      render(this._filmsListComponent.getElm(), listExtraComponent);
-
+  _renderListExtra() {
+    contentExtraType.forEach((title, sortingType) => {
       const rndFilms = getRndArrFromArr(this._films);
       rndFilms.sort((a, b) => {
         a = a[sortingType].length || a[sortingType];
         b = b[sortingType].length || b[sortingType];
         return b - a;
       });
+
+      if (rndFilms[0][sortingType].length === 0 || rndFilms[0][sortingType] === 0) {
+        return;
+      }
+
+      const listExtraComponent = new ListExtraComponent(title);
+      render(this._filmsListComponent.getElm(), listExtraComponent);
 
       const newFilms = renderFilms(listExtraComponent.getElm(), this._popupContainer, rndFilms.slice(0, FILM_EXTRA_COUNT), this._onDataChange, this._onViewChange);
       this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);

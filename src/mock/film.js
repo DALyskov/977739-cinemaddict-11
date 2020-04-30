@@ -108,7 +108,7 @@ const generateFilm = () => {
   film.actors = getRndArrFromArr(actors, getRandomIntegerNumber(1, actors.length));
   film.country = getRndArrFromArr(countries, 1);
   film.ageRating = getRndArrFromArr(ageRatings, 1);
-  film.coments = new Array(getRandomIntegerNumber(0, 5)).fill(``).map(generateComent);
+  film.coments = new Array(getRandomIntegerNumber(0, 6)).fill(``).map(generateComent);
   film.fromWatchlist = Math.random() > 0.5;
   film.isWatched = Math.random() > 0.5;
   film.isFavorite = Math.random() > 0.5;
