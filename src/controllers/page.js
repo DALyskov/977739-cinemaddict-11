@@ -1,61 +1,40 @@
-import {getRndArrFromArr, checkKeyCode} from '../utils/common.js';
-import {RenderPosition, render, remove} from '../utils/render.js';
-import FilmCardComponent from '../components/film-cardr.js';
-import FilmPopupComponent from '../components/film-popup.js';
+import {getRndArrFromArr} from '../utils/common.js';
+import {render, remove} from '../utils/render.js';
+
 import FilmListComponent from '../components/films-list.js';
 import ListContainerComponent from '../components/list-container.js';
 import ListExtraComponent from '../components/list-extra.js';
 import ShowMoreBtnComponent from '../components/show-more-btn.js';
 import SortingComponent from '../components/sorting.js';
 
+import MoveController from './move-controller.js';
+
 
 const SHOWING_FILM_COUNT_ON_START = 5;
 const SHOWING_FILM_COUNT_BY_BUTTON = 5;
 const FILM_EXTRA_COUNT = 2;
 
-const constentExtraType = new Map([
+const contentExtraType = new Map([
   [`rating`, `Top rated`],
   [`coments`, `Most commented`]
 ]);
 
-const renderFilm = (container, popupContainer, film) => {
-  const filmCardComponent = new FilmCardComponent(film);
+const renderFilms = (container, popupContainer, sortedFilms, onDataChange, onViewChange, isListContainer = true) => {
+  let listContainer = container;
 
-  const onFilmClick = (evt) => {
-    evt.preventDefault();
-    const filmCardImg = filmCardComponent.getElm().querySelector(`.film-card__poster`);
-    const filmCardTitle = filmCardComponent.getElm().querySelector(`.film-card__title`);
-    const filmCardRating = filmCardComponent.getElm().querySelector(`.film-card__rating`);
-    if (evt.target !== filmCardImg && evt.target !== filmCardTitle && evt.target !== filmCardRating) {
-      return;
-    }
+  // Возможно стоит вынести это как отдельную функцию
+  if (isListContainer) {
+    const listContainerComponent = new ListContainerComponent();
+    listContainer = listContainerComponent.getElm();
+    render(container, listContainerComponent);
+  }
 
-    const filmPopupComponent = new FilmPopupComponent(film);
+  return sortedFilms.map((film) => {
+    const moveController = new MoveController(listContainer, popupContainer, onDataChange, onViewChange);
+    moveController.render(film);
 
-    const onCloseBtnClick = () => {
-      remove(filmPopupComponent);
-      document.removeEventListener(`keydown`, onEscKeydown);
-    };
-
-    const onEscKeydown = (keydownEvt) => checkKeyCode(onCloseBtnClick, keydownEvt);
-
-    filmPopupComponent.setCloseBtnClickHendler(onCloseBtnClick);
-    document.addEventListener(`keydown`, onEscKeydown);
-
-    render(popupContainer, filmPopupComponent, RenderPosition.AFTERBEGIN);
-  };
-
-  filmCardComponent.setClickHandler(onFilmClick);
-
-  render(container, filmCardComponent);
-};
-
-const renderFilms = (container, popupContainer, sortedFilms, showingFilmsCount) => {
-  const listContainerComponent = new ListContainerComponent();
-  render(container, listContainerComponent);
-
-  sortedFilms.slice(0, showingFilmsCount).
-  forEach((film) => renderFilm(listContainerComponent.getElm(), popupContainer, film));
+    return moveController;
+  });
 };
 
 export default class PageController {
@@ -63,15 +42,18 @@ export default class PageController {
     this._container = container;
     this._popupContainer = popupContainer;
     this._films = films;
+    this._showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
 
     this._sortingComponent = new SortingComponent();
     this._filmsListComponent = new FilmListComponent(this._films);
     this._showMoreBtnComponent = new ShowMoreBtnComponent();
+
+    this._showedFilmControllers = [];
+    this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
   }
 
   render() {
-    let showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
-
     render(this._container, this._sortingComponent);
     const filmList = this._filmsListComponent.getElm().querySelector(`.films-list`);
 
@@ -81,34 +63,68 @@ export default class PageController {
       return;
     }
 
-    renderFilms(filmList, this._popupContainer, this._films, showingFilmsCount);
-    const listContainer = filmList.querySelector(`.films-list__container`);
+    const newFilms = renderFilms(filmList, this._popupContainer, this._films.slice(0, this._showingFilmsCount), this._onDataChange, this._onViewChange);
+    this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
+
+    this._renderShowMoreBtn(filmList);
+    this._renderListExtra();
+  }
+
+  _renderShowMoreBtn(container) {
+    if (this._showingFilmsCount >= this._films.length) {
+      return;
+    }
+
+    const listContainer = container.querySelector(`.films-list__container`);
 
     this._showMoreBtnComponent.setClickHendler(() => {
-      const prevFilmsCount = showingFilmsCount;
-      showingFilmsCount = showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
+      const prevFilmsCount = this._showingFilmsCount;
+      this._showingFilmsCount = this._showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
 
-      this._films.slice(prevFilmsCount, showingFilmsCount)
-      .forEach((film) => renderFilm(listContainer, this._popupContainer, film));
+      const newFilms = renderFilms(listContainer, this._popupContainer, this._films.slice(prevFilmsCount, this._showingFilmsCount), this._onDataChange, this._onViewChange, false);
+      this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
 
-      if (showingFilmsCount >= this._films.length) {
+      if (this._showingFilmsCount >= this._films.length) {
         remove(this._showMoreBtnComponent);
       }
     });
-    render(filmList, this._showMoreBtnComponent);
+    render(container, this._showMoreBtnComponent);
+  }
 
-    constentExtraType.forEach((title, sortingType) => {
-      const listExtraComponent = new ListExtraComponent(title);
-      render(this._filmsListComponent.getElm(), listExtraComponent);
-
-      const newFilms = getRndArrFromArr(this._films);
-      newFilms.sort((a, b) => {
+  _renderListExtra() {
+    contentExtraType.forEach((title, sortingType) => {
+      const rndFilms = getRndArrFromArr(this._films);
+      rndFilms.sort((a, b) => {
         a = a[sortingType].length || a[sortingType];
         b = b[sortingType].length || b[sortingType];
         return b - a;
       });
 
-      renderFilms(listExtraComponent.getElm(), this._popupContainer, newFilms, FILM_EXTRA_COUNT);
+      if (rndFilms[0][sortingType].length === 0 || rndFilms[0][sortingType] === 0) {
+        return;
+      }
+
+      const listExtraComponent = new ListExtraComponent(title);
+      render(this._filmsListComponent.getElm(), listExtraComponent);
+
+      const newFilms = renderFilms(listExtraComponent.getElm(), this._popupContainer, rndFilms.slice(0, FILM_EXTRA_COUNT), this._onDataChange, this._onViewChange);
+      this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
     });
+  }
+
+  _onDataChange(oldData, newData) {
+    const index = this._films.findIndex((v) => v === oldData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._films = [].concat(this._films.slice(0, index), newData, this._films.slice(index + 1));
+
+    this._showedFilmControllers[index].render(this._films[index]);
+  }
+
+  _onViewChange() {
+    this._showedFilmControllers.forEach((v) => v.setDefaultView());
   }
 }

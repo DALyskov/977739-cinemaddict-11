@@ -26,9 +26,22 @@ const remove = (component) => {
   component.removeElm();
 };
 
+const replace = (newComponent, oldComponent) => {
+  const parentElm = oldComponent.getElm().parentElement;
+  const newElm = newComponent.getElm();
+  const oldElm = oldComponent.getElm();
+
+  const isExistElements = !!(parentElm && newElm && oldElm);
+
+  if (isExistElements && parentElm.contains(oldElm)) {
+    parentElm.replaceChild(newElm, oldElm);
+  }
+};
+
 export {
   RenderPosition,
   createElm,
   render,
   remove,
+  replace,
 };
