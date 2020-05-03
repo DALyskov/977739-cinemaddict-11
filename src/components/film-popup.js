@@ -1,19 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-
-const MONTH_NAMES = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`,
-];
+import {formatDuration, formatReleaseDate, formatCommentDate} from '../utils/common.js';
 
 const emojiListDict = {
   smile: `Great movie!`,
@@ -34,7 +20,9 @@ const createComments = (coments) => {
   return (
     coments.map((coment) => {
       const {author, emotion, date, content} = coment;
-      const commentDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
+
+      const commentDate = formatCommentDate(date);
+
       return (
         `<li class="film-details__comment">
           <span class="film-details__comment-emoji">
@@ -55,10 +43,13 @@ const createComments = (coments) => {
 };
 
 const createFilmPopupTemplate = (film, options = {}) => {
-  const {title, genres, poster, description, rating, duration, releaseDate, originTitle, director, writers, actors, country, ageRating, coments, fromWatchlist, isWatched, isFavorite} = film;
+  const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, originTitle, director, writers, actors, country, ageRating, coments, fromWatchlist, isWatched, isFavorite} = film;
   const {newEmoji, newComment} = options;
 
-  const releaseDateString = `${releaseDate.getDate()} ${MONTH_NAMES[releaseDate.getMonth()]} ${releaseDate.getFullYear()}`;
+  const duration = formatDuration(durationMinute);
+
+  const releaseDateString = formatReleaseDate(releaseDate, true);
+
   const writer = writers.join(`, `);
   const actor = actors.join(`, `);
   const genresMarkup = createGanre(genres);

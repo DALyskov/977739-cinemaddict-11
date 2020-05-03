@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const ESC_KEYCODE = 27;
 
 const getRndArrFromArr = (array, length = array.length) => {
@@ -23,8 +25,37 @@ const checkKeyCode = (cb, evt) => {
   }
 };
 
+const formatDuration = (date) => {
+  const d = moment().hour(0);
+  d.minute(date);
+
+  return `${d.hour() > 0 ? `${d.hour()}h ` : ``}${d.minute()}m`;
+};
+
+const formatReleaseDate = (date, isFullDate = false) => {
+  const d = moment(date);
+
+  const releaseDateString = isFullDate ?
+    `${d.day()} ${d.format(`MMMM`)} ${d.year()}`
+    : `${d.year()}`;
+
+  return releaseDateString;
+};
+
+const formatCommentDate = (date) => {
+  const d = moment(date);
+  const dayAgo = moment(new Date()).diff(d, `day`);
+
+  const commentDateString = (dayAgo > 1) ? d.format(`YYYY/M/D H:mm`) : d.fromNow();
+
+  return commentDateString;
+};
+
 export {
   getRndArrFromArr,
   getRandomIntegerNumber,
   checkKeyCode,
+  formatDuration,
+  formatReleaseDate,
+  formatCommentDate,
 };

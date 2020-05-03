@@ -1,7 +1,5 @@
 import AbstractComponent from './abstract-component.js';
 
-// const sortingNames = [`default`, `date`, `rating`];
-
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
@@ -16,7 +14,6 @@ const createSortMarkup = (sortType, isActive) => {
 };
 
 const createSortingTemplate = () => {
-  // const sortsMarkup = sortingNames.map((v, i) => createSortMarkup(v, i === 0)).join(`\n`);
   const sortsMarkup = Object.values(SortType).map((v, i) => createSortMarkup(v, i === 0)).join(`\n`);
 
   return (
