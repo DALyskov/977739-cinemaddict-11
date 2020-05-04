@@ -1,11 +1,13 @@
 import AbstractComponent from './abstract-component.js';
+import {formatDuration, formatReleaseDate} from '../utils/common.js';
 
 const createFilmCardTemplate = (film) => {
-  const {title, genres, poster, description, rating, duration, releaseDate, coments, fromWatchlist, isWatched, isFavorite} = film;
+  const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, coments, fromWatchlist, isWatched, isFavorite} = film;
 
   const genre = genres[0];
-  const releaseYear = releaseDate.getFullYear();
+  const releaseYear = formatReleaseDate(releaseDate);
   const commentsCount = coments.length;
+  const duration = formatDuration(durationMinute);
 
   let reducedDescription = description;
   if (description.length > 140) {

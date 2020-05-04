@@ -7,49 +7,49 @@ const films = [
     poster: `the-dance-of-life.jpg`,
     description: `Burlesque comic Ralph "Skid" Johnson (Skelly), and specialty dancer Bonny Lee King (Carroll), end up together on a cold.`,
     releaseDate: 1929,
-    duration: `1h 55m`,
+    duration: 115,
   }, {
     title: `Sagebrush Trail`,
     genres: [`Western`],
     poster: `sagebrush-trail.jpg`,
     description: `Sentenced for a murder he did not commit, John Brant escapes from prison determined to find the real killer.`,
     releaseDate: 1933,
-    duration: `54m`,
+    duration: 54,
   }, {
     title: `The Man with the Golden Arm`,
     genres: [`Drama`],
     poster: `the-man-with-the-golden-arm.jpg`,
     description: `Frankie Machine (Frank Sinatra) is released from the federal Narcotic Farm in Lexington, Kentucky with a set of drums.`,
     releaseDate: 1955,
-    duration: `1h 59m`,
+    duration: 119,
   }, {
     title: `Santa Claus Conquers the Martians`,
     genres: [`Comedy`],
     poster: `santa-claus-conquers-the-martians.jpg`,
     description: `The Martians Momar ("Mom Martian") and Kimar ("King Martian") are worried that their children Girmar ("Girl Martian") and Bomar ("Boy Martin").`,
     releaseDate: 1964,
-    duration: `1h 21m`,
+    duration: 81,
   }, {
     title: `Popeye the Sailor Meets Sindbad the Sailor`,
     genres: [`Cartoon`],
     poster: `popeye-meets-sinbad.png`,
     description: `In this short, Sindbad the Sailor (presumably Bluto playing a "role") proclaims himself, in song, to be the greatest sailor.`,
     releaseDate: 1936,
-    duration: `16m`,
+    duration: 16,
   }, {
     title: `The Great Flamarion`,
     genres: [`Mystery`],
     poster: `the-great-flamarion.jpg`,
     description: `The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback.`,
     releaseDate: 1945,
-    duration: `1h 18m`,
+    duration: 78,
   }, {
     title: `Made for Each Other`,
     genres: [`Comedy`],
     poster: `made-for-each-other.png`,
     description: `John Mason (James Stewart) is a young, somewhat timid attorney in New York City. He has been doing his job well.`,
     releaseDate: 1939,
-    duration: `1h 32m`,
+    duration: 92,
   }
 ];
 
@@ -87,7 +87,7 @@ const generateComent = () => {
   return {
     author: emotion,
     emotion,
-    date: new Date(),
+    date: new Date(2020, 4, (Math.random() * 3), (Math.random() * 23)),
     content: getRndArrFromArr(emotions,
         getRandomIntegerNumber(2, emotions.length)).join(`, `),
   };
