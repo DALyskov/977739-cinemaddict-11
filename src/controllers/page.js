@@ -5,7 +5,7 @@ import FilmListComponent from '../components/films-list.js';
 import ListContainerComponent from '../components/list-container.js';
 import ListExtraComponent from '../components/list-extra.js';
 import ShowMoreBtnComponent from '../components/show-more-btn.js';
-import SortingComponent from '../components/sorting.js';
+import SortingComponent, {SortType} from '../components/sorting.js';
 
 import MoveController from './move-controller.js';
 
@@ -18,6 +18,25 @@ const contentExtraType = new Map([
   [`rating`, `Top rated`],
   [`coments`, `Most commented`]
 ]);
+
+const getSortedFilms = (films, sortType, from, to) => {
+  let sortedFilms = [];
+  const showingFilms = films.slice();
+
+  switch (sortType) {
+    case SortType.DATE:
+      sortedFilms = showingFilms.sort((a, b) => b.releaseDate - a.releaseDate);
+      break;
+    case SortType.RATING:
+      sortedFilms = showingFilms.sort((a, b) => b.rating - a.rating);
+      break;
+    case SortType.DEFAULT:
+      sortedFilms = showingFilms;
+      break;
+  }
+
+  return sortedFilms.slice(from, to);
+};
 
 const renderFilms = (container, popupContainer, sortedFilms, onDataChange, onViewChange, isListContainer = true) => {
   let listContainer = container;
@@ -55,6 +74,8 @@ export default class PageController {
 
   render() {
     render(this._container, this._sortingComponent);
+
+
     const filmList = this._filmsListComponent.getElm().querySelector(`.films-list`);
 
     render(this._container, this._filmsListComponent);
@@ -62,6 +83,17 @@ export default class PageController {
     if (this._films.length === 0) {
       return;
     }
+
+    this._sortingComponent.setSortTypeHangeHandler((sortType) => {
+      const sortedFilms = getSortedFilms(this._films, sortType, 0, this._showingFilmsCount);
+
+      filmList.innerHTML = ``;
+
+      const newFilms = renderFilms(filmList, this._popupContainer, sortedFilms, this._onDataChange, this._onViewChange);
+      this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
+
+      this._renderShowMoreBtn(filmList);
+    });
 
     const newFilms = renderFilms(filmList, this._popupContainer, this._films.slice(0, this._showingFilmsCount), this._onDataChange, this._onViewChange);
     this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
@@ -71,6 +103,8 @@ export default class PageController {
   }
 
   _renderShowMoreBtn(container) {
+    remove(this._showMoreBtnComponent);
+
     if (this._showingFilmsCount >= this._films.length) {
       return;
     }
@@ -81,7 +115,9 @@ export default class PageController {
       const prevFilmsCount = this._showingFilmsCount;
       this._showingFilmsCount = this._showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
 
-      const newFilms = renderFilms(listContainer, this._popupContainer, this._films.slice(prevFilmsCount, this._showingFilmsCount), this._onDataChange, this._onViewChange, false);
+      const sortedFilms = getSortedFilms(this._films, this._sortingComponent.getSortType(), prevFilmsCount, this._showingFilmsCount);
+
+      const newFilms = renderFilms(listContainer, this._popupContainer, sortedFilms, this._onDataChange, this._onViewChange, false);
       this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
 
       if (this._showingFilmsCount >= this._films.length) {
@@ -92,15 +128,15 @@ export default class PageController {
   }
 
   _renderListExtra() {
-    contentExtraType.forEach((title, sortingType) => {
+    contentExtraType.forEach((title, sortExtraType) => {
       const rndFilms = getRndArrFromArr(this._films);
       rndFilms.sort((a, b) => {
-        a = a[sortingType].length || a[sortingType];
-        b = b[sortingType].length || b[sortingType];
+        a = a[sortExtraType].length || a[sortExtraType];
+        b = b[sortExtraType].length || b[sortExtraType];
         return b - a;
       });
 
-      if (rndFilms[0][sortingType].length === 0 || rndFilms[0][sortingType] === 0) {
+      if (rndFilms[0][sortExtraType].length === 0 || rndFilms[0][sortExtraType] === 0) {
         return;
       }
 

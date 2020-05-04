@@ -100,8 +100,7 @@ const generateFilm = () => {
   film.description = film.description + ` ${getRndArrFromArr(descriptionItems, getRandomIntegerNumber(0, 5)).join(` `)}`;
   film.rating = Math.floor(Math.random() * 100) / 10;
   film.releaseDate = new Date(film.releaseDate instanceof Date ?
-    film.releaseDate.getFullYear()
-    : film.releaseDate, getRandomIntegerNumber(0, 11));
+    film.releaseDate.getFullYear() : film.releaseDate, getRandomIntegerNumber(0, 11));
   film.originTitle = film.title;
   film.director = directors[getRandomIntegerNumber(0, directors.length)];
   film.writers = getRndArrFromArr(writers, getRandomIntegerNumber(1, writers.length));
