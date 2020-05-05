@@ -40,6 +40,7 @@ export default class Sorting extends AbstractComponent {
   setSortTypeHangeHandler(handler) {
     this.getElm().addEventListener(`click`, (evt) => {
       evt.preventDefault();
+      console.dir(evt.target);
       if (evt.target.tagName !== `A`) {
         return;
       }

@@ -8,7 +8,7 @@ const PopupStatus = {
   СLOSED: `closed`,
 };
 
-export default class MoveController {
+export default class MovieController {
   constructor(container, popupContainer, onDataChange, onViewChange) {
     this._container = container;
     this._popupContainer = popupContainer;
@@ -44,6 +44,16 @@ export default class MoveController {
     }
   }
 
+  setDefaultView() {
+    if (this._popupStatus !== PopupStatus.СLOSED) {
+      remove(this._filmPopupComponent);
+    }
+  }
+
+  destroy() {
+    remove(this._filmCardComponent);
+  }
+
   _onFilmClick(evt) {
     evt.preventDefault();
     this._onViewChange();
@@ -77,11 +87,5 @@ export default class MoveController {
 
   _onFilmControlClick(label) {
     this._onDataChange(this._film, Object.assign({}, this._film, {[label]: !this._film[label]}));
-  }
-
-  setDefaultView() {
-    if (this._popupStatus !== PopupStatus.СLOSED) {
-      remove(this._filmPopupComponent);
-    }
   }
 }
