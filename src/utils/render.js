@@ -35,6 +35,8 @@ const replace = (newComponent, oldComponent) => {
 
   if (isExistElements && parentElm.contains(oldElm)) {
     parentElm.replaceChild(newElm, oldElm);
+    console.log(`replaceChild`);
+    console.log(newElm);
   }
 };
 

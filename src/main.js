@@ -11,7 +11,7 @@ import {generateStat} from './mock/stat.js';
 
 import MoviesModel from './models/movies.js';
 
-const FILM_COUNT = 5;
+const FILM_COUNT = 15;
 
 const headerElm = document.querySelector(`.header`);
 const mainElm = document.querySelector(`.main`);
