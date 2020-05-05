@@ -1,4 +1,4 @@
-import {RenderPosition, render} from './utils/render.js';
+import {render} from './utils/render.js';
 
 import FooterStatisticsComponent from './components/footer-statistics.js';
 import ProfileComponent from './components/profile.js';
