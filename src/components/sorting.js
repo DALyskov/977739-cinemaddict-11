@@ -1,4 +1,4 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 
 export const SortType = {
   DEFAULT: `default`,
@@ -6,15 +6,16 @@ export const SortType = {
   RATING: `rating`,
 };
 
-const createSortMarkup = (sortType, isActive) => {
+const createSortMarkup = (sortType, currentSortType) => {
+  const isActive = (sortType === currentSortType);
   return (
     `<li><a href="#" class="sort__button ${isActive ?
       `sort__button--active` : ``}" data-sort-type='${sortType}'>Sort by ${sortType}</a></li>`
   );
 };
 
-const createSortingTemplate = () => {
-  const sortsMarkup = Object.values(SortType).map((v, i) => createSortMarkup(v, i === 0)).join(`\n`);
+const createSortingTemplate = (currentSortType) => {
+  const sortsMarkup = Object.values(SortType).map((v) => createSortMarkup(v, currentSortType)).join(`\n`);
 
   return (
     `<ul class="sort">
@@ -23,21 +24,34 @@ const createSortingTemplate = () => {
   );
 };
 
-export default class Sorting extends AbstractComponent {
+export default class Sorting extends AbstractSmartComponent {
   constructor() {
     super();
     this._currentSortType = SortType.DEFAULT;
   }
 
+  recoveryListeners() {
+    this._onSortElmClick(this._handler);
+  }
+
   getTemplate() {
-    return createSortingTemplate();
+    return createSortingTemplate(this._currentSortType);
   }
 
   getSortType() {
     return this._currentSortType;
   }
 
-  setSortTypeHangeHandler(handler) {
+  setSortTypeDefault() {
+    this._currentSortType = SortType.DEFAULT;
+  }
+
+  setSortTypeHandler(handler) {
+    this._handler = handler;
+    this._onSortElmClick(this._handler);
+  }
+
+  _onSortElmClick(handler) {
     this.getElm().addEventListener(`click`, (evt) => {
       evt.preventDefault();
       if (evt.target.tagName !== `A`) {
@@ -51,6 +65,8 @@ export default class Sorting extends AbstractComponent {
       }
 
       this._currentSortType = newSortType;
+      this.rerender();
+
       handler(this._currentSortType);
     });
   }

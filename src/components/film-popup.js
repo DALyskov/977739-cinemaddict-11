@@ -16,10 +16,10 @@ const createGanre = (genres) => {
   );
 };
 
-const createComments = (coments) => {
+const createComments = (comments) => {
   return (
-    coments.map((coment) => {
-      const {author, emotion, date, content} = coment;
+    comments.map((comment) => {
+      const {author, emotion, date, content, id} = comment;
 
       const commentDate = formatCommentDate(date);
 
@@ -33,7 +33,7 @@ const createComments = (coments) => {
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">${author}</span>
               <span class="film-details__comment-day">${commentDate}</span>
-              <button class="film-details__comment-delete">Delete</button>
+              <button class="film-details__comment-delete" data-comment-id='${id}'>Delete</button>
             </p>
           </div>
         </li>`
@@ -42,8 +42,8 @@ const createComments = (coments) => {
   );
 };
 
-const createFilmPopupTemplate = (film, options = {}) => {
-  const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, originTitle, director, writers, actors, country, ageRating, coments, fromWatchlist, isWatched, isFavorite} = film;
+const createFilmPopupTemplate = (film, comments, options = {}) => {
+  const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, originTitle, director, writers, actors, country, ageRating, /* coments,  */fromWatchlist, isWatched, isFavorite} = film;
   const {newEmoji, newComment} = options;
 
   const duration = formatDuration(durationMinute);
@@ -53,13 +53,13 @@ const createFilmPopupTemplate = (film, options = {}) => {
   const writer = writers.join(`, `);
   const actor = actors.join(`, `);
   const genresMarkup = createGanre(genres);
-  const comentsMarkup = createComments(coments);
-  const commentsCount = coments.length;
+  const comentsMarkup = createComments(comments);
+  const commentsCount = comments.length;
 
   const fromWatchlistActivClass = fromWatchlist ? `checked` : ``;
   const isWatchedActivClass = isWatched ? `checked` : ``;
   const isFavoriteActivClass = isFavorite ? `checked` : ``;
-
+  // style="width: 500px"
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -192,9 +192,10 @@ const createFilmPopupTemplate = (film, options = {}) => {
 };
 
 export default class FilmPopup extends AbstractSmartComponent {
-  constructor(film) {
+  constructor(film, filmComments) {
     super();
     this._film = film;
+    this._filmComments = filmComments;
     this._closeBtnClickHendler = null;
     this._newEmoji = ``;
     this._newComment = ``;
@@ -203,7 +204,7 @@ export default class FilmPopup extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createFilmPopupTemplate(this._film, {
+    return createFilmPopupTemplate(this._film, this._filmComments, {
       newEmoji: this._newEmoji,
       newComment: this._newComment,
     });
@@ -211,6 +212,7 @@ export default class FilmPopup extends AbstractSmartComponent {
 
   recoveryListeners() {
     this.setCloseBtnClickHendler(this._closeBtnClickHendler);
+    this.setComentDeleteBtnClickHandler(this._comentDeleteBtnClickHandler);
     this._subscribeOnEvents();
   }
 
@@ -251,6 +253,18 @@ export default class FilmPopup extends AbstractSmartComponent {
         this._newComment = emojiListDict[v.htmlFor.split(`-`)[1]];
         this.rerender();
       });
+    });
+  }
+
+  setComentDeleteBtnClickHandler(handler) {
+    this.getElm().querySelectorAll(`.film-details__comment-delete`)
+    .forEach((v) => {
+      // v.addEventListener(`click`, (evt) => {
+      //   // evt.preventDefault();
+      //   handler(evt);
+      // });
+      v.addEventListener(`click`, handler);
+      this._comentDeleteBtnClickHandler = handler;
     });
   }
 }

@@ -77,6 +77,14 @@ const ageRatings = [`18+`, `PG-13`, `G`, `PG`, `NC-17`];
 
 const emotions = [`smile`, `sleeping`, `puke`, `angry`];
 
+let IdCounter = 0;
+
+const getFilmId = () => {
+  const filmId = IdCounter;
+  IdCounter++;
+  return filmId;
+};
+
 const getRandomArrayItem = (array) => {
   const randomIndex = getRandomIntegerNumber(0, array.length);
   return array[randomIndex];
@@ -94,7 +102,10 @@ const generateComent = () => {
 };
 
 const generateFilm = () => {
-  const film = getRandomArrayItem(films);
+  const film = Object.assign({}, getRandomArrayItem(films));
+  // film.id = String(Math.floor(Math.random() * 1000000));
+  film.id = String(getFilmId());
+  film.comment = [`${Math.floor(Math.random() * 100)}`, `${Math.floor(Math.random() * 100)}`];
   film.genres = new Set([...film.genres, ...getRndArrFromArr(genres, 1)]);
   film.genres = Array.from(film.genres);
   film.description = film.description + ` ${getRndArrFromArr(descriptionItems, getRandomIntegerNumber(0, 5)).join(` `)}`;

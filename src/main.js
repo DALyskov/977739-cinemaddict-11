@@ -1,12 +1,17 @@
-import FooterStatisticsComponent from './components/footer-statistics.js';
-import MainNavComponent from './components/main-nav.js';
-import ProfileComponent from './components/profile.js';
-import PageController from './controllers/page.js';
-import {generateFilms} from './mock/film.js';
-import {generateFilters} from './mock/filter.js';
-import {generateStat} from './mock/stat.js';
+import {render} from './utils/render.js';
 
-import {RenderPosition, render} from './utils/render.js';
+import FooterStatisticsComponent from './components/footer-statistics.js';
+import ProfileComponent from './components/profile.js';
+
+import PageController from './controllers/page.js';
+import FilterController from './controllers/filter.js';
+
+import {generateFilms} from './mock/film.js';
+import {generateStat} from './mock/stat.js';
+import {generateComents} from './mock/comment.js';
+
+import MoviesModel from './models/movies.js';
+import CommentsModel from './models/comments.js';
 
 const FILM_COUNT = 15;
 
@@ -16,19 +21,21 @@ const footerElm = document.querySelector(`.footer`);
 
 const stat = generateStat();
 const films = generateFilms(FILM_COUNT);
-const filters = generateFilters().map((filter) => {
-  Object.keys(stat).forEach((key) => {
-    if (key === `${filter.name.toLowerCase()}`) {
-      filter.count = stat[`${filter.name.toLowerCase()}`].size;
-    }
-  });
-  return filter;
-});
+const comments = generateComents(100);
+
+const moviesModel = new MoviesModel();
+moviesModel.setFilms(films);
+
+const commentsModel = new CommentsModel();
+commentsModel.setComments(comments);
+// console.log(commentsModel);
 
 render(headerElm, new ProfileComponent(stat.watchlist.size));
-render(mainElm, new MainNavComponent(filters), RenderPosition.AFTERBEGIN);
 
-const pageController = new PageController(mainElm, footerElm, films);
+const filterController = new FilterController(mainElm, moviesModel);
+filterController.render();
+
+const pageController = new PageController(mainElm, footerElm, moviesModel, commentsModel);
 pageController.render();
 
 render(footerElm, new FooterStatisticsComponent(FILM_COUNT));
