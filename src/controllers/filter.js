@@ -12,8 +12,10 @@ export default class FilterController {
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+    this.render = this.render.bind(this);
 
     this._moviesModel.setDataChangeHandler(this._onDataChange);
+    this._moviesModel.setFilterChangeHandler(this.render);
   }
 
   render() {
@@ -38,9 +40,9 @@ export default class FilterController {
   }
 
   _onFilterChange(filterType) {
-    this._moviesModel.setFilter(filterType);
     this._activeFilterType = filterType;
-    this.render();
+    this._moviesModel.setFilter(filterType);
+    // this.render();
   }
 
   _onDataChange() {

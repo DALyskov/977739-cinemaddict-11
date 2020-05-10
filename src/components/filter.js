@@ -27,13 +27,13 @@ const createMainNavTemplate = (filters) => {
 };
 
 export default class Filter extends AbstractComponent {
-  constructor(filters) {
+  constructor(moviesModel) {
     super();
-    this._filters = filters;
+    this._moviesModel = moviesModel;
   }
 
   getTemplate() {
-    return createMainNavTemplate(this._filters);
+    return createMainNavTemplate(this._moviesModel);
   }
 
   setFilterChangeHandler(handler) {

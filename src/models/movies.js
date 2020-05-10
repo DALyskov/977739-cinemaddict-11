@@ -32,7 +32,19 @@ export default class Movies {
 
     this._films = [].concat(this._films.slice(0, index), film, this._films.slice(index + 1));
 
-    // this._showedFilmControllers[index].render(this._films[index]);
+    this._callHandlers(this._dataChangeHandlers);
+    return true;
+  }
+
+  removeFilm(id) {
+    const index = this._films.findIndex((v) => v.id === id);
+
+    if (index === -1) {
+      return false;
+    }
+
+    this._films = [].concat(this._films.slice(0, index), this._films.slice(index + 1));
+
     this._callHandlers(this._dataChangeHandlers);
     return true;
   }
