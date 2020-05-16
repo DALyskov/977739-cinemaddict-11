@@ -12,6 +12,8 @@ export default class Movies {
 
   setFilms(films) {
     this._films = Array.from(films);
+
+    // преждевременно вызывает pageController._updateFilms
     this._callHandlers(this._dataChangeHandlers);
   }
 

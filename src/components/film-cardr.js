@@ -2,11 +2,11 @@ import AbstractComponent from './abstract-component.js';
 import {formatDuration, formatReleaseDate} from '../utils/common.js';
 
 const createFilmCardTemplate = (film) => {
-  const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, comment, fromWatchlist, isWatched, isFavorite} = film;
+  const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, comments, fromWatchlist, isWatched, isFavorite} = film;
 
   const genre = genres[0];
   const releaseYear = formatReleaseDate(releaseDate);
-  const commentsCount = comment.length;
+  const commentsCount = comments.length;
   const duration = formatDuration(durationMinute);
 
   let reducedDescription = description;
@@ -27,7 +27,7 @@ const createFilmCardTemplate = (film) => {
         <span class="film-card__duration">${duration}</span>
         <span class="film-card__genre">${genre}</span>
       </p>
-      <img src="./images/posters/${poster}" alt="${title}" class="film-card__poster">
+      <img src="${poster}" alt="${title}" class="film-card__poster">
       <p class="film-card__description">${reducedDescription}</p>
       <a class="film-card__comments">${commentsCount} comments</a>
       <form class="film-card__controls">
