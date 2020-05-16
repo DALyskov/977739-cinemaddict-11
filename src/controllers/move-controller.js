@@ -12,12 +12,6 @@ const PopupStatus = {
 };
 
 const parseFormData = (formData) => {
-  // console.log(formData.get(`comment-emoji`));
-
-  // for (let value of formData.keys()) {
-  //   console.log(value);
-  // }
-
   return new CommentModel({
     "comment": formData.get(`comment`),
     "date": new Date().toISOString(),
@@ -48,8 +42,6 @@ export default class MovieController {
     this._onIsFavoriteBtnClick = this._onFilmControlClick.bind(this, `isFavorite`);
     this._comentDeleteBtnClickHandler = this._comentDeleteBtnClickHandler.bind(this);
     this._submitCommentHandler = this._submitCommentHandler.bind(this);
-
-    // this._openPopup = this._openPopup.bind(this);
   }
 
   render(film) {
@@ -86,7 +78,6 @@ export default class MovieController {
 
   _onFilmClick(evt) {
     evt.preventDefault();
-    // this._onViewChange();
     const filmCardImg = this._filmCardComponent.getElm().querySelector(`.film-card__poster`);
     const filmCardTitle = this._filmCardComponent.getElm().querySelector(`.film-card__title`);
     const filmCardRating = this._filmCardComponent.getElm().querySelector(`.film-card__rating`);
@@ -138,7 +129,7 @@ export default class MovieController {
 
     this._onCommentsDataChange(commentId, null, this._film.id);
 
-    const newFilmComments = this._film.comments.filter((comment) => comment !== commentId);
+    // const newFilmComments = this._film.comments.filter((comment) => comment !== commentId);
 
     // console.log(this._film);
     // const newFilm = FilmModel.clone(this._film);
@@ -150,12 +141,8 @@ export default class MovieController {
 
   _submitCommentHandler(evt) {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === `Enter`) {
-      // console.log(`ctrlKey`);
-
-      // const newComment = CommentModel.clone(this._film);
       const formData = this._filmPopupComponent.getData();
       const data = parseFormData(formData);
-      console.log(data);
 
       this._onCommentsDataChange(null, data, this._film.id);
     }

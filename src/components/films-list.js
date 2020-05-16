@@ -10,7 +10,6 @@ const createFilmsListTemplate = (films) => {
     </section>`
   );
 };
-{/* <div class="films-list__container"></div> */}
 
 export default class FilmList extends AbstractComponent {
   constructor(films) {

@@ -1,5 +1,7 @@
-import AbstractSmartComponent from './abstract-smart-component.js';
 import {formatDuration, formatReleaseDate, formatCommentDate} from '../utils/common.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
+
+import {encode} from 'he';
 
 const EmotionType = {
   SMILE: `smile`,
@@ -19,8 +21,9 @@ const createGanre = (genres) => {
 const createComments = (comments) => {
   return (
     comments.map((comment) => {
-      const {author, emotion, date, content, id} = comment;
+      const {author, emotion, date, content: notSanitizedСontent, id} = comment;
 
+      const content = encode(notSanitizedСontent);
       const commentDate = formatCommentDate(date);
 
       return (
@@ -43,7 +46,7 @@ const createComments = (comments) => {
 };
 
 const createFilmPopupTemplate = (film, comments, options = {}) => {
-  const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, originTitle, director, writers, actors, country, ageRating, /* coments,  */fromWatchlist, isWatched, isFavorite} = film;
+  const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, originTitle, director, writers, actors, country, ageRating, fromWatchlist, isWatched, isFavorite} = film;
   const {newEmotionImg, newEmotionValue, newComment} = options;
 
   const duration = formatDuration(durationMinute);

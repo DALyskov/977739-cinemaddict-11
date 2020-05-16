@@ -1,5 +1,5 @@
 import {getRndArrFromArr} from '../utils/common.js';
-import {render, remove, replace} from '../utils/render.js';
+import {render, remove} from '../utils/render.js';
 // import FilmModel from '../models/film.js';
 
 import FilmListComponent from '../components/films-list.js';
@@ -23,7 +23,6 @@ const contentExtraType = new Map([
 const getSortedFilms = (films, sortType, from, to) => {
   let sortedFilms = [];
   const showingFilms = films.slice();
-
   switch (sortType) {
     case SortType.DATE:
       sortedFilms = showingFilms.sort((a, b) => b.releaseDate - a.releaseDate);
@@ -35,13 +34,12 @@ const getSortedFilms = (films, sortType, from, to) => {
       sortedFilms = showingFilms;
       break;
   }
-
   return sortedFilms.slice(from, to);
 };
 
 const renderFilms = (container, popupContainer, films, comments, onDataChange, onViewChange, onCommentsDataChange, api, isListContainer = true) => {
   let listContainer = container;
-  // console.log(comments);
+
   if (isListContainer) {
     const listContainerComponent = new ListContainerComponent();
     listContainer = listContainerComponent.getElm();
@@ -50,11 +48,6 @@ const renderFilms = (container, popupContainer, films, comments, onDataChange, o
 
   return films.map((film) => {
     const movieController = new MovieController(listContainer, popupContainer, onDataChange, onViewChange, onCommentsDataChange, comments, api);
-
-    // const filmComments = film.comments.map((v) => {
-    //   return comments.getCommentById(v);
-    // });
-    // movieController.render(film, filmComments);
 
     movieController.render(film);
     return movieController;
@@ -107,7 +100,7 @@ export default class PageController {
     }
 
     this._sortingComponent.setSortTypeHandler(this._onSortTypeChange);
-    // console.log(this._filmList);
+
     this._renderFilms(
         this._filmList,
         this._moviesModel.getFilms().slice(0, this._showingFilmsCount),
@@ -119,8 +112,6 @@ export default class PageController {
 
     this._renderShowMoreBtn(this._filmList);
     this._renderListExtra();
-    // console.log(this._moviesModel._films);
-    // console.log(this._moviesModel.getFilms());
   }
 
   _removeFilms() {
@@ -175,11 +166,6 @@ export default class PageController {
   }
 
   _updateFilms() {
-    // this._sortingComponent.setSortTypeDefault();
-    // this._sortingComponent.rerender();
-
-    // const sortedFilms = getSortedFilms(this._moviesModel.getFilms(), this._sortType, 0, this._showingFilmsCount);
-
     if (this._filmsListComponent === null) {
       return;
     }
@@ -189,7 +175,6 @@ export default class PageController {
     this._removeFilms();
     this._renderFilms(
         this._listContainer,
-        // this._moviesModel.getFilms().slice(0, this._showingFilmsCount),
         sortedFilms,
         this._commentsModel,
         this._showedFilmControllers,
@@ -203,13 +188,6 @@ export default class PageController {
       rndFilms.sort((a, b) => {
         a = a[sortExtraType].length || a[sortExtraType];
         b = b[sortExtraType].length || b[sortExtraType];
-
-        // a = (typeof a[sortExtraType] === `number`) ?
-        //   a[sortExtraType] : a[sortExtraType].length;
-
-        // b = (typeof b[sortExtraType] === `number`) ?
-        //   b[sortExtraType] : b[sortExtraType].length;
-
         return b - a;
       });
 
@@ -225,11 +203,6 @@ export default class PageController {
   }
 
   _onDataChange(oldData, newData, popupStatus) {
-    // if (newData === null) {
-
-    // }
-    // console.log(newData);
-    // const newFilm = FilmModel.clone(newData);
     if (popupStatus) {
       this._openedPopupFilmId = oldData.id;
     }
@@ -241,7 +214,6 @@ export default class PageController {
   }
 
   _onCommentsDataChange(oldCommentId, newComment, filmId) {
-    // this._commentsModel.removeComment(oldData.id);
     this._openedPopupFilmId = filmId;
 
     if (newComment === null) {
@@ -279,9 +251,6 @@ export default class PageController {
 
   _onSortTypeChange(sortType) {
     this._showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
-
-    // this._sortType = sortType;
-
     const sortedFilms = getSortedFilms(this._moviesModel.getFilms(), sortType, 0, this._showingFilmsCount);
 
     this._removeFilms();

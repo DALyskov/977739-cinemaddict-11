@@ -2,7 +2,7 @@ export default class Film {
   constructor(data) {
     this.id = data[`id`];
     this.comments = data[`comments`];
-    // console.log(this.comments);
+
     this.title = data[`film_info`][`title`];
     this.originTitle = data[`film_info`][`alternative_title`];
     this.rating = data[`film_info`][`total_rating`];
