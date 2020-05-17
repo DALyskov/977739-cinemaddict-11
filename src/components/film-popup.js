@@ -10,6 +10,13 @@ const EmotionType = {
   ANGRY: `angry`,
 };
 
+const DefaultOption = {
+  deleteButtonText: `Delete`,
+  deletingCommentId: ``,
+  formAttribute: ``,
+  isSubmitErr: false,
+};
+
 const createGanre = (genres) => {
   return (
     genres.map((genre) => {
@@ -18,13 +25,21 @@ const createGanre = (genres) => {
   );
 };
 
-const createComments = (comments) => {
+const createComments = (comments, externalOption) => {
   return (
     comments.map((comment) => {
       const {author, emotion, date, content: notSanitizedСontent, id} = comment;
 
       const content = encode(notSanitizedСontent);
       const commentDate = formatCommentDate(date);
+
+      let deleteButtonText = DefaultOption.deleteButtonText;
+      let btnAttribute = ``;
+
+      if (externalOption.deletingCommentId === id) {
+        deleteButtonText = externalOption.deleteButtonText;
+        btnAttribute = `disabled`;
+      }
 
       return (
         `<li class="film-details__comment">
@@ -36,7 +51,7 @@ const createComments = (comments) => {
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">${author}</span>
               <span class="film-details__comment-day">${commentDate}</span>
-              <button class="film-details__comment-delete" data-comment-id='${id}'>Delete</button>
+              <button class="film-details__comment-delete" data-comment-id='${id}' ${btnAttribute}>${deleteButtonText}</button>
             </p>
           </div>
         </li>`
@@ -47,7 +62,7 @@ const createComments = (comments) => {
 
 const createFilmPopupTemplate = (film, comments, options = {}) => {
   const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, originTitle, director, writers, actors, country, ageRating, fromWatchlist, isWatched, isFavorite} = film;
-  const {newEmotionImg, newEmotionValue, newComment} = options;
+  const {newEmotionImg, newEmotionValue, newComment, externalOption} = options;
 
   const duration = formatDuration(durationMinute);
 
@@ -56,8 +71,11 @@ const createFilmPopupTemplate = (film, comments, options = {}) => {
   const writer = writers.join(`, `);
   const actor = actors.join(`, `);
   const genresMarkup = createGanre(genres);
-  const comentsMarkup = createComments(comments);
+  const comentsMarkup = createComments(comments, externalOption);
   const commentsCount = comments.length;
+
+  const disablingAttribute = externalOption.formAttribute;
+  const inputStyle = externalOption.isSubmitErr ? `style="border: 2px solid red"` : ``;
 
   const fromWatchlistActivClass = fromWatchlist ? `checked` : ``;
   const isWatchedActivClass = isWatched ? `checked` : ``;
@@ -168,7 +186,7 @@ const createFilmPopupTemplate = (film, comments, options = {}) => {
               <div for="add-emoji" class="film-details__add-emoji-label">${newEmotionImg}</div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${newComment}</textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${inputStyle} ${disablingAttribute}>${newComment}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -206,9 +224,11 @@ export default class FilmPopup extends AbstractSmartComponent {
     this._film = film;
     this._filmComments = filmComments;
     this._closeBtnClickHendler = null;
+
     this._newEmotionImg = ``;
     this._newEmotionValue = ``;
     this._newComment = ``;
+    this._externalOption = DefaultOption;
 
     this._subscribeOnEvents();
   }
@@ -218,6 +238,7 @@ export default class FilmPopup extends AbstractSmartComponent {
       newEmotionImg: this._newEmotionImg,
       newEmotionValue: this._newEmotionValue,
       newComment: this._newComment,
+      externalOption: this._externalOption,
     });
   }
 
@@ -229,7 +250,9 @@ export default class FilmPopup extends AbstractSmartComponent {
   }
 
   rerender() {
+    const scrollTop = this._elm.scrollTop;
     super.rerender();
+    this._elm.scrollTop = scrollTop;
   }
 
   setCloseBtnClickHendler(handler) {
@@ -289,5 +312,10 @@ export default class FilmPopup extends AbstractSmartComponent {
   getData() {
     const form = this.getElm().querySelector(`.film-details__inner`);
     return new FormData(form);
+  }
+
+  setOption(option) {
+    this._externalOption = Object.assign({}, DefaultOption, option);
+    this.rerender();
   }
 }

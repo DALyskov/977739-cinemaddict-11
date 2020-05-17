@@ -6,6 +6,9 @@ import CommentModel from '../models/comment.js';
 import FilmCardComponent from '../components/film-cardr.js';
 import FilmPopupComponent from '../components/film-popup.js';
 
+
+const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const PopupStatus = {
   OPENED: `opened`,
   СLOSED: `closed`,
@@ -76,6 +79,27 @@ export default class MovieController {
     }
   }
 
+  shake(isDeleting) {
+    const shakingElm = isDeleting ?
+      this._deletingCommentElm :
+      this._filmPopupComponent.getElm();
+
+    shakingElm.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+    // console.log(this._filmPopupComponent._newComment);
+
+    setTimeout(() => {
+      shakingElm.style.animation = ``;
+
+      this._filmPopupComponent.setOption({
+        deleteButtonText: `Delete`,
+        deletingCommentId: ``,
+        formAttribute: ``,
+        isSubmitErr: !isDeleting,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
   _onFilmClick(evt) {
     evt.preventDefault();
     const filmCardImg = this._filmCardComponent.getElm().querySelector(`.film-card__poster`);
@@ -125,7 +149,15 @@ export default class MovieController {
 
   _comentDeleteBtnClickHandler(evt) {
     evt.preventDefault();
+
     const commentId = evt.target.dataset.commentId;
+
+    this._filmPopupComponent.setOption({
+      deleteButtonText: `Deleting…`,
+      deletingCommentId: commentId,
+    });
+
+    this._deletingCommentElm = this._filmPopupComponent.getElm().querySelector(`[data-comment-id="${commentId}"]`).parentElement.parentElement.parentElement;
 
     this._onCommentsDataChange(commentId, null, this._film.id);
 
@@ -143,6 +175,14 @@ export default class MovieController {
     if ((evt.ctrlKey || evt.metaKey) && evt.key === `Enter`) {
       const formData = this._filmPopupComponent.getData();
       const data = parseFormData(formData);
+
+      // this._filmPopupComponent._commentInput = evt.target;
+      this._filmPopupComponent._newComment = evt.target.value;
+
+      this._filmPopupComponent.setOption({
+        formAttribute: `disabled`,
+        isSubmitErr: false,
+      });
 
       this._onCommentsDataChange(null, data, this._film.id);
     }

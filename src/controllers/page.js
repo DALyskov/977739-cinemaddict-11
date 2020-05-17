@@ -220,16 +220,31 @@ export default class PageController {
       this._api.deleteComment(oldCommentId)
         .then(() => {
           this._commentsModel.removeComment(oldCommentId);
-          this._api.getFilms()
-            .then((films) => {
-              this._moviesModel.setFilms(films);
-            });
+          return this._api.getFilms();
+        })
+        .then((films) => {
+          this._moviesModel.setFilms(films);
+        })
+        .catch(() => {
+          this._showedFilmControllers.forEach((filmController) => {
+            if (filmController._film.id === this._openedPopupFilmId) {
+              filmController.shake(true);
+            }
+          });
         });
     } else {
       this._api.createComment(filmId, newComment)
         .then(({updatedFilm, updatedCommens}) => {
           this._commentsModel.setComments(updatedCommens);
           this._moviesModel.updateFilm(updatedFilm.id, updatedFilm);
+        })
+        .catch(() => {
+          this._showedFilmControllers.forEach((filmController) => {
+            if (filmController._film.id === this._openedPopupFilmId) {
+              // filmController._filmPopupComponent._commentInput.style.border = `2px solid red`;
+              filmController.shake(false);
+            }
+          });
         });
     }
   }

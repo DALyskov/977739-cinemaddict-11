@@ -53,11 +53,7 @@ export default class API {
       headers: new Headers({"Content-Type": `application/json`})
     })
       .then((response) => response.json())
-      // .then((data) => {
       .then(({movie, comments}) => {
-        // console.log(data);
-        // const updatedFilm = Film.parseFilm(data.movie);
-        // const updatedCommens = Comment.parseComments(data.comments);
         const updatedFilm = Film.parseFilm(movie);
         const updatedCommens = Comment.parseComments(comments);
         return {updatedFilm, updatedCommens};
@@ -77,4 +73,37 @@ export default class API {
         throw err;
       });
   }
+
+  // _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+  //   headers.append(`Authorization`, this._authorization);
+
+  //   return this._timeout(1000, fetch(`${this._endPoint}/${url}`, {method, body, headers}))
+  //     .then(checkStatus)
+  //     .catch((err) => {
+  //       throw err;
+  //     });
+  // }
+
+  // _timeout(ms, promise) {
+  //   return new Promise((resolve, reject) => {
+  //     setTimeout(() => {
+  //       reject(new Error(`timeout`));
+  //     }, ms);
+  //     promise.then(resolve, reject);
+  //   });
+  // }
+
+
+  // _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+  //   headers.append(`Authorization`, this._authorization);
+
+  //   return Promise.race([
+  //     fetch(`${this._endPoint}/${url}`, {method, body, headers}),
+  //     new Promise((_, reject) => setTimeout(() => reject(new Error(`timeout`)), 1000))
+  //   ])
+  //     .then(checkStatus)
+  //     .catch((err) => {
+  //       throw err;
+  //     });
+  // }
 }
