@@ -1,5 +1,5 @@
-// import getFilmByFilter from '../utils/filter.js';
 import AbstractComponent from './abstract-component.js';
+import {MENU_ITEM_STATS} from '../const.js';
 
 const createFilterMarkup = (filter, isFirstItem) => {
   const {name, count, checked: isChecked} = filter;
@@ -12,38 +12,41 @@ const createFilterMarkup = (filter, isFirstItem) => {
   );
 };
 
-const createMainNavTemplate = (filters) => {
-  // const firstfilterName = filters[0].name;
+const createMainNavTemplate = (filters, activeFilterType) => {
   const filtersMarkup = filters.slice(0).map((v, i) => createFilterMarkup(v, i)).join(`\n`);
 
+  const modifier = activeFilterType === MENU_ITEM_STATS ? `main-navigation__item--active` : ``;
   return (
     `<nav class="main-navigation">
       <div class="main-navigation__items">
         ${filtersMarkup}
       </div>
-      <a href="#stats" class="main-navigation__additional">Stats</a>
+      <a href="#stats" class="main-navigation__additional ${modifier}" data-filter-type="${MENU_ITEM_STATS}">Stats</a>
     </nav>`
   );
 };
 
 export default class Filter extends AbstractComponent {
-  constructor(moviesModel) {
+  constructor(filters, activeFilterType) {
     super();
-    this._moviesModel = moviesModel;
+    this._filters = filters;
+    this._activeFilterType = activeFilterType;
   }
 
   getTemplate() {
-    return createMainNavTemplate(this._moviesModel);
+    return createMainNavTemplate(this._filters, this._activeFilterType);
   }
 
   setFilterChangeHandler(handler) {
-    this.getElm().addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      if (evt.target.classList[0] !== `main-navigation__item`) {
-        return;
-      }
-      // const filterName = getFilterNameById(evt.target.dataset.filterType);
-      handler(evt.target.dataset.filterType);
+    let menuItems = this.getElm().querySelectorAll(`.main-navigation__item`);
+    const menuItemStats = this.getElm().querySelector(`.main-navigation__additional`);
+    menuItems = Array.prototype.concat(Array.from(menuItems), menuItemStats);
+
+    menuItems.forEach((item) => {
+      item.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        handler(evt.currentTarget.dataset.filterType);
+      });
     });
   }
 }

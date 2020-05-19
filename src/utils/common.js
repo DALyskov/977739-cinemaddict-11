@@ -51,6 +51,22 @@ const formatCommentDate = (date) => {
   return commentDateString;
 };
 
+const getRank = (watchedFilmsCount) => {
+  const ranckProfileListDict = {
+    0: `Novice`,
+    10: `Fan`,
+    20: `Movie Buff`,
+  };
+
+  let rank = ranckProfileListDict[0];
+  Object.keys(ranckProfileListDict).forEach((key) => {
+    if (watchedFilmsCount > key) {
+      rank = ranckProfileListDict[key];
+    }
+  });
+  return rank;
+};
+
 export {
   getRndArrFromArr,
   getRandomIntegerNumber,
@@ -58,4 +74,5 @@ export {
   formatDuration,
   formatReleaseDate,
   formatCommentDate,
+  getRank,
 };

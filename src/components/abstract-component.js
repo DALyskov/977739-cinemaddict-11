@@ -1,5 +1,7 @@
 import {createElm} from '../utils/render.js';
 
+const HIDDEN_CLASS = `visually-hidden`;
+
 export default class AbstractComponent {
   constructor() {
     if (new.target === AbstractComponent) {
@@ -18,5 +20,17 @@ export default class AbstractComponent {
   }
   removeElm() {
     this._elm = null;
+  }
+
+  show() {
+    if (this._elm) {
+      this._elm.classList.remove(HIDDEN_CLASS);
+    }
+  }
+
+  hide() {
+    if (this._elm) {
+      this._elm.classList.add(HIDDEN_CLASS);
+    }
   }
 }

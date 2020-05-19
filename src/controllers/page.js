@@ -86,6 +86,19 @@ export default class PageController {
     // this._commentsModel.setDataChangeHandler(/* this._updateFilms */);
   }
 
+  hide() {
+    // this._container.hide();
+    this._sortingComponent.hide();
+    this._filmsListComponent.hide();
+  }
+
+  show() {
+    // this._container.show();
+    this._sortingComponent.setSortTypeDefault();
+    this._sortingComponent.show();
+    this._filmsListComponent.show();
+  }
+
   render() {
     this._filmsListComponent = new FilmListComponent(this._moviesModel.getFilms());
 
@@ -169,9 +182,7 @@ export default class PageController {
     if (this._filmsListComponent === null) {
       return;
     }
-
     const sortedFilms = getSortedFilms(this._moviesModel.getFilms(), this._sortingComponent.getSortType(), 0, this._showingFilmsCount);
-
     this._removeFilms();
     this._renderFilms(
         this._listContainer,

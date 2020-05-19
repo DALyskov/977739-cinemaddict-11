@@ -27,6 +27,7 @@ const createSortingTemplate = (currentSortType) => {
 export default class Sorting extends AbstractSmartComponent {
   constructor() {
     super();
+    this._handler = null;
     this._currentSortType = SortType.DEFAULT;
   }
 
@@ -44,6 +45,8 @@ export default class Sorting extends AbstractSmartComponent {
 
   setSortTypeDefault() {
     this._currentSortType = SortType.DEFAULT;
+    this.rerender();
+    this._handler(this._currentSortType);
   }
 
   setSortTypeHandler(handler) {

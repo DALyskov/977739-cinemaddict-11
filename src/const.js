@@ -4,3 +4,5 @@ export const FilterType = {
   HISTORY: `History`,
   FAVORITES: `Favorites`
 };
+
+export const MENU_ITEM_STATS = `stats`;

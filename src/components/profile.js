@@ -1,18 +1,8 @@
+import {getRank} from '../utils/common.js';
 import AbstractComponent from './abstract-component.js';
 
-const ranckProfileListDict = {
-  0: `Novice`,
-  10: `Fan`,
-  20: `Movie Buff`,
-};
-
 const createProfileTemplate = (watchlistSize) => {
-  let rank = ``;
-  Object.keys(ranckProfileListDict).forEach((key) => {
-    if (watchlistSize > key) {
-      rank = ranckProfileListDict[key];
-    }
-  });
+  const rank = getRank(watchlistSize);
 
   return (
     `<section class="header__profile profile">
