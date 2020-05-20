@@ -223,14 +223,13 @@ export default class FilmPopup extends AbstractSmartComponent {
     super();
     this._film = film;
     this._filmComments = filmComments;
-    this._closeBtnClickHendler = null;
 
     this._newEmotionImg = ``;
     this._newEmotionValue = ``;
     this._newComment = ``;
     this._externalOption = DefaultOption;
 
-    this._subscribeOnEvents();
+    this._setEmojiClickHandler();
   }
 
   getTemplate() {
@@ -243,10 +242,13 @@ export default class FilmPopup extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setCloseBtnClickHendler(this._closeBtnClickHendler);
+    this.setCloseBtnClickHendler(this._onCloseBtnClickHendler);
     this.setComentDeleteBtnClickHandler(this._comentDeleteBtnClickHandler);
     this.setSubmitCommentHandler(this._submitCommentHandler);
-    this._subscribeOnEvents();
+    this.setWatchlistBtnClickHandler(this._onWatchlistBtnClic);
+    this.setWatchedBtnClickHandler(this._onWatchedBtnClick);
+    this.setFavoriteBtnClickHandler(this._onFavoriteBtnClick);
+    this._setEmojiClickHandler();
   }
 
   rerender() {
@@ -258,25 +260,28 @@ export default class FilmPopup extends AbstractSmartComponent {
   setCloseBtnClickHendler(handler) {
     this.getElm().querySelector(`.film-details__close-btn`).
     addEventListener(`click`, handler);
-    this._closeBtnClickHendler = handler;
+    this._onCloseBtnClickHendler = handler;
   }
 
   setWatchlistBtnClickHandler(handler) {
     this.getElm().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, handler);
+    this._onWatchlistBtnClic = handler;
   }
 
   setWatchedBtnClickHandler(handler) {
     this.getElm().querySelector(`.film-details__control-label--watched`)
       .addEventListener(`click`, handler);
+    this._onWatchedBtnClick = handler;
   }
 
   setFavoriteBtnClickHandler(handler) {
     this.getElm().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, handler);
+    this._onFavoriteBtnClick = handler;
   }
 
-  _subscribeOnEvents() {
+  _setEmojiClickHandler() {
     const elm = this.getElm();
     const inputElm = elm.querySelector(`.film-details__comment-input`);
 

@@ -41,6 +41,9 @@ api.getFilms()
     moviesModel.setFilms(films);
     pageController.render();
     // render(footerElm, footerStatisticsComponent);
+  })
+  .catch(() => {
+    pageController.render();
   });
 
 filterController.onMenuItemChangeHandler = (isStatsTarget) => {

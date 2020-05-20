@@ -47,7 +47,7 @@ export default class API {
 
   createComment(filmId, comment) {
     return this._load({
-      url: `comments/${filmId}`,
+      url: `1comments/${filmId}`,
       method: Method.POST,
       body: JSON.stringify(comment.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
@@ -61,7 +61,7 @@ export default class API {
   }
 
   deleteComment(commentId) {
-    return this._load({url: `comments/${commentId}`, method: Method.DELETE});
+    return this._load({url: `1comments/${commentId}`, method: Method.DELETE});
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

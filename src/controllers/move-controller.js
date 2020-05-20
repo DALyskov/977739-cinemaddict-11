@@ -35,7 +35,6 @@ export default class MovieController {
     this._popupStatus = PopupStatus.СLOSED;
     this._filmCardComponent = null;
     this._filmPopupComponent = null;
-    // this._oldFilmPopupComponent = null;
     this._film = null;
     this._filmComments = null;
 
@@ -51,8 +50,6 @@ export default class MovieController {
     const oldFilmComponent = this._filmCardComponent;
     this._filmCardComponent = new FilmCardComponent(film);
     this._film = film;
-    // this._filmComments = filmComments ? filmComments : this._filmComments;
-
     this._filmCardComponent.setClickHandler(this._onFilmClick);
     this._filmCardComponent.setWatchlistBtnClickHandler(this._onWatchlistBtnClick);
     this._filmCardComponent.setWatchedBtnClickHandler(this._onWatchedBtnClick);
@@ -68,7 +65,6 @@ export default class MovieController {
   setDefaultView() {
     if (this._popupStatus !== PopupStatus.СLOSED) {
       remove(this._filmPopupComponent);
-      // this._popupStatus = PopupStatus.СLOSED;
     }
   }
 
@@ -85,8 +81,6 @@ export default class MovieController {
       this._filmPopupComponent.getElm();
 
     shakingElm.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
-
-    // console.log(this._filmPopupComponent._newComment);
 
     setTimeout(() => {
       shakingElm.style.animation = ``;
@@ -114,11 +108,9 @@ export default class MovieController {
 
   renderPopup() {
     this._onViewChange();
-    // this._oldFilmPopupComponent = this._filmPopupComponent;
 
     this._api.getComments(this._film.id)
       .then((comments) => {
-
         this._commentsModel.setComments(comments);
         this._filmComments = this._commentsModel.getComments();
         this._filmPopupComponent = new FilmPopupComponent(this._film, this._filmComments);
@@ -137,9 +129,7 @@ export default class MovieController {
         this._filmPopupComponent.setWatchlistBtnClickHandler(this._onWatchlistBtnClick);
         this._filmPopupComponent.setWatchedBtnClickHandler(this._onWatchedBtnClick);
         this._filmPopupComponent.setFavoriteBtnClickHandler(this._onIsFavoriteBtnClick);
-
         this._filmPopupComponent.setComentDeleteBtnClickHandler(this._comentDeleteBtnClickHandler);
-
         this._filmPopupComponent.setSubmitCommentHandler(this._submitCommentHandler);
 
         render(this._popupContainer, this._filmPopupComponent, RenderPosition.AFTERBEGIN);
@@ -160,15 +150,6 @@ export default class MovieController {
     this._deletingCommentElm = this._filmPopupComponent.getElm().querySelector(`[data-comment-id="${commentId}"]`).parentElement.parentElement.parentElement;
 
     this._onCommentsDataChange(commentId, null, this._film.id);
-
-    // const newFilmComments = this._film.comments.filter((comment) => comment !== commentId);
-
-    // console.log(this._film);
-    // const newFilm = FilmModel.clone(this._film);
-    // newFilm[`comments`] = newFilmComments;
-    // console.log(newFilm);
-
-    // this._onDataChange(this._film, newFilm, (this._popupStatus === PopupStatus.OPENED));
   }
 
   _submitCommentHandler(evt) {
@@ -176,7 +157,6 @@ export default class MovieController {
       const formData = this._filmPopupComponent.getData();
       const data = parseFormData(formData);
 
-      // this._filmPopupComponent._commentInput = evt.target;
       this._filmPopupComponent._newComment = evt.target.value;
 
       this._filmPopupComponent.setOption({
@@ -192,7 +172,6 @@ export default class MovieController {
     const newFilm = FilmModel.clone(this._film);
     newFilm[label] = !newFilm[label];
 
-    // this._onDataChange(this._film, Object.assign({}, this._film, {[label]: !this._film[label]}), (this._popupStatus === PopupStatus.OPENED));
     this._onDataChange(this._film, newFilm, (this._popupStatus === PopupStatus.OPENED));
   }
 }

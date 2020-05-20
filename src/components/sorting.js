@@ -46,7 +46,7 @@ export default class Sorting extends AbstractSmartComponent {
   setSortTypeDefault() {
     this._currentSortType = SortType.DEFAULT;
     this.rerender();
-    this._handler(this._currentSortType);
+    this._handler(/* this._currentSortType */);
   }
 
   setSortTypeHandler(handler) {
@@ -70,7 +70,7 @@ export default class Sorting extends AbstractSmartComponent {
       this._currentSortType = newSortType;
       this.rerender();
 
-      handler(this._currentSortType);
+      handler(/* this._currentSortType */);
     });
   }
 }
