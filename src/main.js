@@ -8,8 +8,6 @@ import StatsComponent from './components/stats.js';
 import PageController from './controllers/page.js';
 import FilterController from './controllers/filter.js';
 
-import {generateStat} from './mock/stat.js'; /* нужно будет удалить */
-
 import MoviesModel from './models/movies.js';
 import CommentsModel from './models/comments.js';
 
@@ -21,27 +19,28 @@ const mainElm = document.querySelector(`.main`);
 const footerElm = document.querySelector(`.footer`);
 
 const api = new API(END_POINT, AUTHORIZATION);
-
-const stat = generateStat();
-
 const moviesModel = new MoviesModel();
 const commentsModel = new CommentsModel();
 const filterController = new FilterController(mainElm, moviesModel);
 const pageController = new PageController(mainElm, footerElm, moviesModel, commentsModel, api);
 const statsComponent = new StatsComponent(moviesModel);
+const profileComponent = new ProfileComponent(moviesModel);
+const footerStatisticsComponent = new FooterStatisticsComponent(moviesModel);
 
-render(headerElm, new ProfileComponent(stat.watchlist.size));
 
 render(mainElm, statsComponent);
 statsComponent.hide();
-
 filterController.render();
+render(footerElm, footerStatisticsComponent);
+
+render(headerElm, profileComponent);
+// pageController.render();
 
 api.getFilms()
   .then((films) => {
     moviesModel.setFilms(films);
     pageController.render();
-    render(footerElm, new FooterStatisticsComponent(moviesModel.getFilms().length));
+    // render(footerElm, footerStatisticsComponent);
   });
 
 filterController.onMenuItemChangeHandler = (isStatsTarget) => {

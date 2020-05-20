@@ -1,4 +1,5 @@
-import AbstractComponent from './abstract-component.js';
+// import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component';
 
 const createFooterStatisticsTemplate = (countFilms) => {
   // countFilms = String(countFilms).replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, `$1 `);
@@ -8,13 +9,18 @@ const createFooterStatisticsTemplate = (countFilms) => {
   );
 };
 
-export default class FooterStatistics extends AbstractComponent {
-  constructor(countFilms) {
+export default class FooterStatistics extends AbstractSmartComponent {
+  constructor(moviesModel) {
     super();
-    this._countFilms = countFilms;
+    this._moviesModel = moviesModel;
+
+    this.rerender = this.rerender.bind(this);
+    this._moviesModel.setDataChangeHandler(this.rerender);
   }
 
   getTemplate() {
-    return createFooterStatisticsTemplate(this._countFilms);
+    return createFooterStatisticsTemplate(this._moviesModel.getFilmsAll().length);
   }
+
+  recoveryListeners() {}
 }

@@ -1,19 +1,113 @@
-import {FilterType} from '../const.js';
+// import {FilterType} from '../const.js';
 import {getRank} from '../utils/common.js';
-import {getFilmByFilter} from '../utils/filter.js';
+// import {getFilmByFilter} from '../utils/filter.js';
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import moment from 'moment';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 const FILTER_ID_PREFIX = `statistic-`;
-
+const BAR_HEIGHT = 50;
 const StatFilter = {
   ALL_TIME: `all-time`,
   TODAY: `today`,
   WEEK: `week`,
   MONTH: `month`,
   YEAR: `year`,
+};
+
+
+const renderChart = (container, genres, genresCounts) => {
+  container.height = BAR_HEIGHT * genres.length;
+
+  const myChart = new Chart(container, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: genres,
+      datasets: [{
+        data: genresCounts,
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20
+          },
+          color: `#ffffff`,
+          anchor: `start`,
+          align: `start`,
+          offset: 40,
+        }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#ffffff`,
+            padding: 100,
+            fontSize: 20
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 24
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
+  return myChart;
+};
+
+const compareDate = (watchedFilms, period) => {
+  return watchedFilms.filter((film) => {
+    // console.log(film.watchingDate);
+    const periodDate = moment().subtract(period, `day`);
+    const watchingDate = moment(new Date(film.watchingDate));
+    return (periodDate < watchingDate);
+  });
+};
+
+const getFilmsByPeriod = (watchedFilms, activStatFilter) => {
+  let watchedFilmsBypPeriod = [];
+  switch (activStatFilter) {
+    case StatFilter.ALL_TIME :
+      watchedFilmsBypPeriod = watchedFilms;
+      break;
+    case StatFilter.TODAY :
+      watchedFilmsBypPeriod = compareDate(watchedFilms, 1);
+      break;
+    case StatFilter.WEEK :
+      watchedFilmsBypPeriod = compareDate(watchedFilms, 7);
+      break;
+    case StatFilter.MONTH :
+      watchedFilmsBypPeriod = compareDate(watchedFilms, 30);
+      break;
+    case StatFilter.YEAR :
+      watchedFilmsBypPeriod = compareDate(watchedFilms, 365);
+      break;
+  }
+  return watchedFilmsBypPeriod;
 };
 
 const getFilterNameById = (id) => {
@@ -30,56 +124,16 @@ const createFilterMarkup = (filter, activStatFilter) => {
   );
 };
 
-
-const createStatsTemplate = (films, activStatFilter) => {
-  let watchedFilms = getFilmByFilter(films, FilterType.HISTORY);
-  // const watchedFilms = films.filter((film) => film.isWatched);
-
-  watchedFilms = watchedFilms.filter((film) => {
-    const periodDate = moment().subtract(1, `all-time`);
-    const watchingDate = moment(new Date(film.watchingDate));
-    console.log(periodDate, watchingDate);
-    console.log(periodDate < watchingDate);
-    return (periodDate < watchingDate);
-  });
-
-  console.log(watchedFilms);
-
-  const watchedFilmsCount = watchedFilms.length;
-
-  watchedFilms.forEach((v) => console.log(v.watchingDate));
-
-
-  // const time = moment().subtract(1, `week`);
-  // const date = (watchedFilms.length > 0) ? watchedFilms[1].watchingDate : null;
-
-  // console.log(time, moment(new Date(date)));
-  // console.log((time < moment(new Date(date))));
-
-
-  const rank = getRank(watchedFilmsCount);
-
-  const rawDuration = watchedFilms.reduce((acc, obj) => {
+const createStatsTemplate = (watchedFilms, watchedFilmsByPeriod, genresWithCount, activStatFilter) => {
+  const rank = getRank(watchedFilms.length);
+  const watchedFilmsCount = watchedFilmsByPeriod.length;
+  const rawDuration = watchedFilmsByPeriod.reduce((acc, obj) => {
     acc += obj.duration;
     return acc;
   }, 0);
-
   const hour = Math.floor(rawDuration / 60);
   const minute = rawDuration % 60;
-
-  const allFilmsGenres = watchedFilms.map((film) => film.genres).flat();
-  const genreStats = {};
-
-  allFilmsGenres.forEach((genre) => {
-    if (genreStats[genre]) {
-      genreStats[genre] = genreStats[genre] + 1;
-    } else {
-      genreStats[genre] = 1;
-    }
-  });
-
-  const sortedGenres = Object.entries(genreStats).sort((a, b) => b[1] - a[1]);
-  const topGenre = (sortedGenres.length > 0) ? sortedGenres[0][0] : ``;
+  const topGenre = (watchedFilmsByPeriod.length > 0) ? genresWithCount[0][0] : ``;
 
   const filtersMarkup = Object.entries(StatFilter)
     .map((it) => createFilterMarkup(it[1], activStatFilter)).join(`\n`);
@@ -125,24 +179,64 @@ export default class Stats extends AbstractSmartComponent {
     super();
     this._moviesModel = moviesModel;
     this._activStatFilter = StatFilter.ALL_TIME;
+    this._watchedFilms = [];
+    this._watchedFilmsByPeriod = [];
+    this._genresWithCount = [];
   }
 
   getTemplate() {
-    return createStatsTemplate(this._moviesModel.getFilmsAll(), this._activStatFilter);
+    return createStatsTemplate(
+        this._watchedFilms,
+        this._watchedFilmsByPeriod,
+        this._genresWithCount,
+        this._activStatFilter
+    );
   }
 
   show() {
+    this._activStatFilter = StatFilter.ALL_TIME;
     super.show();
-
     this.rerender();
+  }
+
+  rerender() {
+    this._watchedFilms = this._moviesModel.getWatchedFilms();
+
+    this._watchedFilmsByPeriod = getFilmsByPeriod(this._watchedFilms, this._activStatFilter);
+    this._genresWithCount = this._getGenresWithCount(this._watchedFilmsByPeriod);
+
+    super.rerender();
+    this._renderChart();
   }
 
   recoveryListeners() {
     this._setFilterChange();
   }
 
+  _getGenresWithCount(films) {
+    const allFilmsGenres = films.map((film) => film.genres).flat();
+    const genreStats = {};
+    allFilmsGenres.forEach((genre) => {
+      if (genreStats[genre]) {
+        genreStats[genre] = genreStats[genre] + 1;
+      } else {
+        genreStats[genre] = 1;
+      }
+    });
+    const sortedGenres = Object.entries(genreStats).sort((a, b) => b[1] - a[1]);
+    return sortedGenres;
+  }
+
+  _renderChart() {
+    const statisticCtx = this.getElm().querySelector(`.statistic__chart`);
+    const genres = this._genresWithCount.map((v) => v[0]);
+    const genresCounts = this._genresWithCount.map((v) => v[1]);
+
+    renderChart(statisticCtx, genres, genresCounts);
+  }
+
   _setFilterChange() {
-    this._elm.querySelector(`.statistic__filters`)
+    this.getElm().querySelector(`.statistic__filters`)
       .addEventListener(`change`, (evt) => {
         this._activStatFilter = getFilterNameById(evt.target.id);
         this.rerender();

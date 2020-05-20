@@ -1,5 +1,5 @@
 import {getRank} from '../utils/common.js';
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component';
 
 const createProfileTemplate = (watchlistSize) => {
   const rank = getRank(watchlistSize);
@@ -12,13 +12,18 @@ const createProfileTemplate = (watchlistSize) => {
   );
 };
 
-export default class Profile extends AbstractComponent {
-  constructor(watchlistSize) {
+export default class Profile extends AbstractSmartComponent {
+  constructor(moviesModel) {
     super();
-    this._watchlistSize = watchlistSize;
+    this._moviesModel = moviesModel;
+
+    this.rerender = this.rerender.bind(this);
+    this._moviesModel.setDataChangeHandler(this.rerender);
   }
 
   getTemplate() {
-    return createProfileTemplate(this._watchlistSize);
+    return createProfileTemplate(this._moviesModel.getWatchedFilms().length);
   }
+
+  recoveryListeners() {}
 }
