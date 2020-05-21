@@ -47,7 +47,7 @@ export default class API {
 
   createComment(filmId, comment) {
     return this._load({
-      url: `1comments/${filmId}`,
+      url: `comments/${filmId}`,
       method: Method.POST,
       body: JSON.stringify(comment.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
@@ -61,7 +61,7 @@ export default class API {
   }
 
   deleteComment(commentId) {
-    return this._load({url: `1comments/${commentId}`, method: Method.DELETE});
+    return this._load({url: `comments/${commentId}`, method: Method.DELETE});
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
@@ -73,37 +73,4 @@ export default class API {
         throw err;
       });
   }
-
-  // _load({url, method = Method.GET, body = null, headers = new Headers()}) {
-  //   headers.append(`Authorization`, this._authorization);
-
-  //   return this._timeout(1000, fetch(`${this._endPoint}/${url}`, {method, body, headers}))
-  //     .then(checkStatus)
-  //     .catch((err) => {
-  //       throw err;
-  //     });
-  // }
-
-  // _timeout(ms, promise) {
-  //   return new Promise((resolve, reject) => {
-  //     setTimeout(() => {
-  //       reject(new Error(`timeout`));
-  //     }, ms);
-  //     promise.then(resolve, reject);
-  //   });
-  // }
-
-
-  // _load({url, method = Method.GET, body = null, headers = new Headers()}) {
-  //   headers.append(`Authorization`, this._authorization);
-
-  //   return Promise.race([
-  //     fetch(`${this._endPoint}/${url}`, {method, body, headers}),
-  //     new Promise((_, reject) => setTimeout(() => reject(new Error(`timeout`)), 1000))
-  //   ])
-  //     .then(checkStatus)
-  //     .catch((err) => {
-  //       throw err;
-  //     });
-  // }
 }

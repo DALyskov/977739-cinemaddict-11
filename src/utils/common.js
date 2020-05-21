@@ -1,8 +1,6 @@
-import moment from 'moment';
-
 const ESC_KEYCODE = 27;
 
-const getRndArrFromArr = (array, length = array.length) => {
+export const getRndArrFromArr = (array, length = array.length) => {
   if (length > array.length) {
     length = array.length;
   }
@@ -15,43 +13,13 @@ const getRndArrFromArr = (array, length = array.length) => {
   return newArr;
 };
 
-const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
-
-const checkKeyCode = (cb, evt) => {
+export const checkKeyCode = (cb, evt) => {
   if (evt.keyCode === ESC_KEYCODE) {
     cb(evt);
   }
 };
 
-const formatDuration = (date) => {
-  const d = moment().hour(0);
-  d.minute(date);
-
-  return `${d.hour() > 0 ? `${d.hour()}h ` : ``}${d.minute()}m`;
-};
-
-const formatReleaseDate = (date, isFullDate = false) => {
-  const d = moment(date);
-
-  const releaseDateString = isFullDate ?
-    `${d.day()} ${d.format(`MMMM`)} ${d.year()}`
-    : `${d.year()}`;
-
-  return releaseDateString;
-};
-
-const formatCommentDate = (date) => {
-  const d = moment(date);
-  const dayAgo = moment(new Date()).diff(d, `day`);
-
-  const commentDateString = (dayAgo > 1) ? d.format(`YYYY/M/D H:mm`) : d.fromNow();
-
-  return commentDateString;
-};
-
-const getRank = (watchedFilmsCount) => {
+export const getRank = (watchedFilmsCount) => {
   const ranckProfileListDict = {
     0: `Novice`,
     10: `Fan`,
@@ -65,14 +33,4 @@ const getRank = (watchedFilmsCount) => {
     }
   });
   return rank;
-};
-
-export {
-  getRndArrFromArr,
-  getRandomIntegerNumber,
-  checkKeyCode,
-  formatDuration,
-  formatReleaseDate,
-  formatCommentDate,
-  getRank,
 };

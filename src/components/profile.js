@@ -13,16 +13,16 @@ const createProfileTemplate = (watchlistSize) => {
 };
 
 export default class Profile extends AbstractSmartComponent {
-  constructor(moviesModel) {
+  constructor(filmsModel) {
     super();
-    this._moviesModel = moviesModel;
+    this._filmsModel = filmsModel;
 
     this.rerender = this.rerender.bind(this);
-    this._moviesModel.setDataChangeHandler(this.rerender);
+    this._filmsModel.setDataChangeHandler(this.rerender);
   }
 
   getTemplate() {
-    return createProfileTemplate(this._moviesModel.getWatchedFilms().length);
+    return createProfileTemplate(this._filmsModel.getWatchedFilms().length);
   }
 
   recoveryListeners() {}

@@ -7,11 +7,10 @@ const createLoadingTemplate = () => {
 };
 
 export default class Loading extends AbstractComponent {
-  constructor(films) {
+  constructor() {
     super();
-    this._films = films;
   }
   getTemplate() {
-    return createLoadingTemplate(this._films);
+    return createLoadingTemplate();
   }
 }

@@ -8,7 +8,7 @@ import StatsComponent from './components/stats.js';
 import PageController from './controllers/page.js';
 import FilterController from './controllers/filter.js';
 
-import MoviesModel from './models/movies.js';
+import FilmsModel from './models/films.js';
 import CommentsModel from './models/comments.js';
 
 const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
@@ -19,30 +19,26 @@ const mainElm = document.querySelector(`.main`);
 const footerElm = document.querySelector(`.footer`);
 
 const api = new API(END_POINT, AUTHORIZATION);
-const moviesModel = new MoviesModel();
+const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
-const filterController = new FilterController(mainElm, moviesModel);
-const pageController = new PageController(mainElm, footerElm, moviesModel, commentsModel, api);
-const statsComponent = new StatsComponent(moviesModel);
-const profileComponent = new ProfileComponent(moviesModel);
-const footerStatisticsComponent = new FooterStatisticsComponent(moviesModel);
+
+const filterController = new FilterController(mainElm, filmsModel);
+const pageController = new PageController(mainElm, footerElm, filmsModel, commentsModel, api);
+const statsComponent = new StatsComponent(filmsModel);
+const profileComponent = new ProfileComponent(filmsModel);
+const footerStatisticsComponent = new FooterStatisticsComponent(filmsModel);
 
 
 render(mainElm, statsComponent);
 statsComponent.hide();
 filterController.render();
+render(headerElm, profileComponent);
 render(footerElm, footerStatisticsComponent);
 
-render(headerElm, profileComponent);
-// pageController.render();
 
 api.getFilms()
   .then((films) => {
-    moviesModel.setFilms(films);
-    pageController.render();
-    // render(footerElm, footerStatisticsComponent);
-  })
-  .catch(() => {
+    filmsModel.setFilms(films);
     pageController.render();
   });
 

@@ -27,12 +27,8 @@ const createSortingTemplate = (currentSortType) => {
 export default class Sorting extends AbstractSmartComponent {
   constructor() {
     super();
-    this._handler = null;
+    this._onSortTypeChange = null;
     this._currentSortType = SortType.DEFAULT;
-  }
-
-  recoveryListeners() {
-    this._onSortElmClick(this._handler);
   }
 
   getTemplate() {
@@ -43,18 +39,19 @@ export default class Sorting extends AbstractSmartComponent {
     return this._currentSortType;
   }
 
+  recoveryListeners() {
+    this.setSortTypeChangeHandler(this._onSortTypeChange);
+  }
+
   setSortTypeDefault() {
     this._currentSortType = SortType.DEFAULT;
     this.rerender();
-    this._handler(/* this._currentSortType */);
+    this._onSortTypeChange();
   }
 
-  setSortTypeHandler(handler) {
-    this._handler = handler;
-    this._onSortElmClick(this._handler);
-  }
+  setSortTypeChangeHandler(handler) {
+    this._onSortTypeChange = handler;
 
-  _onSortElmClick(handler) {
     this.getElm().addEventListener(`click`, (evt) => {
       evt.preventDefault();
       if (evt.target.tagName !== `A`) {
@@ -70,7 +67,7 @@ export default class Sorting extends AbstractSmartComponent {
       this._currentSortType = newSortType;
       this.rerender();
 
-      handler(/* this._currentSortType */);
+      this._onSortTypeChange();
     });
   }
 }

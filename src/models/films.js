@@ -1,7 +1,7 @@
 import {FilterType} from '../const.js';
 import {getFilmByFilter} from '../utils/filter';
 
-export default class Movies {
+export default class Films {
   constructor() {
     this._films = [];
     this._activeFilterType = FilterType.ALL;
@@ -11,8 +11,12 @@ export default class Movies {
   }
 
   setFilms(films) {
-    this._films = Array.from(films);
+    this._film = Array.from(films);
     this._callHandlers(this._dataChangeHandlers);
+  }
+
+  getFilmsAll() {
+    return this._films;
   }
 
   getFilms() {
@@ -21,10 +25,6 @@ export default class Movies {
 
   getWatchedFilms() {
     return getFilmByFilter(this._films, FilterType.HISTORY);
-  }
-
-  getFilmsAll() {
-    return this._films;
   }
 
   updateFilm(id, film) {

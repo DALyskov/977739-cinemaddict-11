@@ -1,16 +1,21 @@
-const RenderPosition = {
+export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`
 };
 
-const createElm = (template) => {
+export const createElm = (template) => {
   const newElm = document.createElement(`div`);
   newElm.innerHTML = template;
 
   return newElm.firstChild;
 };
 
-const render = (container, component, place = `beforeend`) => {
+export const remove = (component) => {
+  component.getElm().remove();
+  component.removeElm();
+};
+
+export const render = (container, component, place = `beforeend`) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(component.getElm());
@@ -21,12 +26,7 @@ const render = (container, component, place = `beforeend`) => {
   }
 };
 
-const remove = (component) => {
-  component.getElm().remove();
-  component.removeElm();
-};
-
-const replace = (newComponent, oldComponent) => {
+export const replace = (newComponent, oldComponent) => {
   const parentElm = oldComponent.getElm().parentElement;
   const newElm = newComponent.getElm();
   const oldElm = oldComponent.getElm();
@@ -36,12 +36,4 @@ const replace = (newComponent, oldComponent) => {
   if (isExistElements && parentElm.contains(oldElm)) {
     parentElm.replaceChild(newElm, oldElm);
   }
-};
-
-export {
-  RenderPosition,
-  createElm,
-  render,
-  remove,
-  replace,
 };

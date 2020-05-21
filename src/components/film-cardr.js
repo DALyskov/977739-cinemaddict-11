@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {formatDuration, formatReleaseDate} from '../utils/common.js';
+import {formatDuration, formatReleaseDate} from '../utils/date.js';
 
 const createFilmCardTemplate = (film) => {
   const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, comments, fromWatchlist, isWatched, isFavorite} = film;

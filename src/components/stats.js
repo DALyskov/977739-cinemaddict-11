@@ -1,6 +1,4 @@
-// import {FilterType} from '../const.js';
 import {getRank} from '../utils/common.js';
-// import {getFilmByFilter} from '../utils/filter.js';
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import moment from 'moment';
 import Chart from 'chart.js';
@@ -15,7 +13,6 @@ const StatFilter = {
   MONTH: `month`,
   YEAR: `year`,
 };
-
 
 const renderChart = (container, genres, genresCounts) => {
   container.height = BAR_HEIGHT * genres.length;
@@ -81,7 +78,6 @@ const renderChart = (container, genres, genresCounts) => {
 
 const compareDate = (watchedFilms, period) => {
   return watchedFilms.filter((film) => {
-    // console.log(film.watchingDate);
     const periodDate = moment().subtract(period, `day`);
     const watchingDate = moment(new Date(film.watchingDate));
     return (periodDate < watchingDate);
@@ -175,9 +171,9 @@ const createStatsTemplate = (watchedFilms, watchedFilmsByPeriod, genresWithCount
 };
 
 export default class Stats extends AbstractSmartComponent {
-  constructor(moviesModel) {
+  constructor(filmsModel) {
     super();
-    this._moviesModel = moviesModel;
+    this._filmsModel = filmsModel;
     this._activStatFilter = StatFilter.ALL_TIME;
     this._watchedFilms = [];
     this._watchedFilmsByPeriod = [];
@@ -193,15 +189,12 @@ export default class Stats extends AbstractSmartComponent {
     );
   }
 
-  show() {
-    this._activStatFilter = StatFilter.ALL_TIME;
-    super.show();
-    this.rerender();
+  recoveryListeners() {
+    this._setFilterChange();
   }
 
   rerender() {
-    this._watchedFilms = this._moviesModel.getWatchedFilms();
-
+    this._watchedFilms = this._filmsModel.getWatchedFilms();
     this._watchedFilmsByPeriod = getFilmsByPeriod(this._watchedFilms, this._activStatFilter);
     this._genresWithCount = this._getGenresWithCount(this._watchedFilmsByPeriod);
 
@@ -209,8 +202,10 @@ export default class Stats extends AbstractSmartComponent {
     this._renderChart();
   }
 
-  recoveryListeners() {
-    this._setFilterChange();
+  show() {
+    this._activStatFilter = StatFilter.ALL_TIME;
+    super.show();
+    this.rerender();
   }
 
   _getGenresWithCount(films) {

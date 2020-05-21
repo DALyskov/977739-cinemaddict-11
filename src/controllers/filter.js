@@ -1,37 +1,34 @@
+import {FilterType, MENU_ITEM_STATS} from '../const.js';
 import {getFilmByFilter} from '../utils/filter.js';
 import {RenderPosition, render, replace} from '../utils/render.js';
-import {FilterType, MENU_ITEM_STATS} from '../const.js';
 
 import FilterComponent from '../components/filter.js';
 
 export default class FilterController {
-  constructor(container, moviesModel) {
+  constructor(container, filmsModel) {
     this._container = container;
-    this._moviesModel = moviesModel;
+    this._filmsModel = filmsModel;
     this._activeMenuItem = FilterType.ALL;
 
-    // this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
     this.render = this.render.bind(this);
 
-    this._moviesModel.setDataChangeHandler(this.render);
-    this._moviesModel.setFilterChangeHandler(this.render);
+    this._filmsModel.setDataChangeHandler(this.render);
+    this._filmsModel.setFilterChangeHandler(this.render);
   }
 
   render() {
     const filters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
-        count: getFilmByFilter(this._moviesModel.getFilmsAll(), filterType).length,
+        count: getFilmByFilter(this._filmsModel.getFilmsAll(), filterType).length,
         checked: filterType === this._activeMenuItem,
       };
     });
 
     const oldComponent = this._filterComponent;
     this._filterComponent = new FilterComponent(filters, this._activeMenuItem);
-
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
-    // this._filterComponent.setMenuItemChangeHandler(this.onMenuItemChangeHandler);
 
     if (oldComponent) {
       replace(this._filterComponent, oldComponent);
@@ -58,21 +55,7 @@ export default class FilterController {
       }
 
       this._activeMenuItem = filterType;
-      this._moviesModel.setFilter(filterType);
+      this._filmsModel.setFilter(filterType);
     }
   }
-
-  // _onFilterChange(filterType) {
-  //   this._activeMenuItem = filterType;
-  //   this._moviesModel.setFilter(filterType);
-  // }
-
-  // setActiveMenuItem(filterType) {
-  //   this._activeMenuItem = filterType;
-  //   this.render();
-  // }
-
-  // _onDataChange() {
-  //   this.render();
-  // }
 }

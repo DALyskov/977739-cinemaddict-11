@@ -7,17 +7,15 @@ export default class Film {
     this.originTitle = data[`film_info`][`alternative_title`];
     this.rating = data[`film_info`][`total_rating`];
     this.poster = data[`film_info`][`poster`];
-    // был строкой, теперь число
     this.ageRating = data[`film_info`][`age_rating`];
     this.director = data[`film_info`][`director`];
     this.writers = data[`film_info`][`writers`];
     this.actors = data[`film_info`][`actors`];
     this.releaseDate = new Date(`${data[`film_info`][`release`][`date`]}`);
 
-    // был массивом строк, попробуй переделать в просто строку
     this.country = [data[`film_info`][`release`][`release_country`]];
-    this.duration = data[`film_info`][`runtime`];
 
+    this.duration = data[`film_info`][`runtime`];
     this.genres = data[`film_info`][`genre`];
     this.description = data[`film_info`][`description`];
 

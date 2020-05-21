@@ -1,6 +1,5 @@
-import {formatDuration, formatReleaseDate, formatCommentDate} from '../utils/common.js';
+import {formatDuration, formatReleaseDate, formatCommentDate} from '../utils/date.js';
 import AbstractSmartComponent from './abstract-smart-component.js';
-
 import {encode} from 'he';
 
 const EmotionType = {
@@ -86,7 +85,6 @@ const createFilmPopupTemplate = (film, comments, options = {}) => {
   const checkedPuke = newEmotionValue === EmotionType.PUKE ? `checked` : ``;
   const checkedAngry = newEmotionValue === EmotionType.ANGRY ? `checked` : ``;
 
-  // style="width: 500px"
   return (
     `<section class="film-details">
       <form class="film-details__inner" action="" method="get">
@@ -241,10 +239,20 @@ export default class FilmPopup extends AbstractSmartComponent {
     });
   }
 
+  getData() {
+    const form = this.getElm().querySelector(`.film-details__inner`);
+    return new FormData(form);
+  }
+
+  setOption(option) {
+    this._externalOption = Object.assign({}, DefaultOption, option);
+    this.rerender();
+  }
+
   recoveryListeners() {
     this.setCloseBtnClickHendler(this._onCloseBtnClickHendler);
-    this.setComentDeleteBtnClickHandler(this._comentDeleteBtnClickHandler);
-    this.setSubmitCommentHandler(this._submitCommentHandler);
+    this.setComentDeleteBtnClickHandler(this._onComentDeleteBtnClick);
+    this.setSubmitCommentHandler(this._onSubmitComment);
     this.setWatchlistBtnClickHandler(this._onWatchlistBtnClic);
     this.setWatchedBtnClickHandler(this._onWatchedBtnClick);
     this.setFavoriteBtnClickHandler(this._onFavoriteBtnClick);
@@ -281,6 +289,21 @@ export default class FilmPopup extends AbstractSmartComponent {
     this._onFavoriteBtnClick = handler;
   }
 
+  setComentDeleteBtnClickHandler(handler) {
+    this.getElm().querySelectorAll(`.film-details__comment-delete`)
+    .forEach((v) => {
+      v.addEventListener(`click`, handler);
+      this._onComentDeleteBtnClick = handler;
+    });
+  }
+
+  setSubmitCommentHandler(handler) {
+    const inputElm = this.getElm().querySelector(`.film-details__comment-input`);
+
+    inputElm.addEventListener(`keydown`, handler);
+    this._onSubmitComment = handler;
+  }
+
   _setEmojiClickHandler() {
     const elm = this.getElm();
     const inputElm = elm.querySelector(`.film-details__comment-input`);
@@ -297,30 +320,5 @@ export default class FilmPopup extends AbstractSmartComponent {
         this.rerender();
       });
     });
-  }
-
-  setComentDeleteBtnClickHandler(handler) {
-    this.getElm().querySelectorAll(`.film-details__comment-delete`)
-    .forEach((v) => {
-      v.addEventListener(`click`, handler);
-      this._comentDeleteBtnClickHandler = handler;
-    });
-  }
-
-  setSubmitCommentHandler(handler) {
-    const inputElm = this.getElm().querySelector(`.film-details__comment-input`);
-
-    inputElm.addEventListener(`keydown`, handler);
-    this._submitCommentHandler = handler;
-  }
-
-  getData() {
-    const form = this.getElm().querySelector(`.film-details__inner`);
-    return new FormData(form);
-  }
-
-  setOption(option) {
-    this._externalOption = Object.assign({}, DefaultOption, option);
-    this.rerender();
   }
 }
