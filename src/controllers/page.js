@@ -5,6 +5,7 @@ import FilmListComponent from '../components/films-list.js';
 import ListContainerComponent from '../components/list-container.js';
 import ListExtraComponent from '../components/list-extra.js';
 import LoadingComponent from '../components/loading.js';
+import LoadingErrComponent from '../components/loading-err.js'; /* Err */
 import ShowMoreBtnComponent from '../components/show-more-btn.js';
 import SortingComponent, {SortType} from '../components/sorting.js';
 
@@ -67,6 +68,7 @@ export default class PageController {
 
     this._sortingComponent = new SortingComponent();
     this._loadingComponent = new LoadingComponent();
+    this._loadingErrComponent = new LoadingErrComponent(); /* err */
     this._showMoreBtnComponent = new ShowMoreBtnComponent();
 
     this._listExtraComponents = [];
@@ -99,8 +101,12 @@ export default class PageController {
     this._filmsListComponent.show();
   }
 
-  render() {
-    this._filmsListComponent = new FilmListComponent(this._filmsModel.getFilmsAll());
+  render(isLoadedData) {
+    let isfilms = true;
+    if (isLoadedData) {
+      isfilms = this._filmsModel.getFilmsAll().length !== 0 ? true : false;
+    }
+    this._filmsListComponent = new FilmListComponent(isfilms);
     this._filmList = this._filmsListComponent.getElm().querySelector(`.films-list`);
 
     render(this._container, this._sortingComponent);
@@ -180,7 +186,12 @@ export default class PageController {
       this._listExtraComponents.push(listExtraComponent);
       render(this._filmsListComponent.getElm(), listExtraComponent);
 
-      this._renderFilms(listExtraComponent.getElm(), rndFilms.slice(0, FILM_EXTRA_COUNT), this._commentsModel, this._showedFilmControllersExtra);
+      this._renderFilms(
+          listExtraComponent.getElm(),
+          rndFilms.slice(0, FILM_EXTRA_COUNT),
+          this._commentsModel,
+          this._showedFilmControllersExtra
+      );
     });
   }
 
@@ -205,6 +216,11 @@ export default class PageController {
       }
     });
     render(filmsContainer, this._showMoreBtnComponent);
+  }
+
+  renderErr() {
+    render(this._filmList, this._loadingErrComponent, RenderPosition.AFTERBEGIN);
+    setTimeout(remove, 5000, this._loadingErrComponent);
   }
 
   _openPopup() {
@@ -259,6 +275,9 @@ export default class PageController {
         this._showedFilmControllersExtra = this._oldShowedFilmControllersExtra.slice();
         this._oldShowedFilmControllers = [];
         this._oldShowedFilmControllersExtra = [];
+        // render(this._filmList, this._loadingErrComponent, RenderPosition.AFTERBEGIN);
+        // setTimeout(remove, 5000, this._loadingErrComponent);
+        this.renderErr();
         this._updateFilms();
       });
   }

@@ -58,4 +58,6 @@ export default class FilterController {
       this._filmsModel.setFilter(filterType);
     }
   }
+
+  // _onMenuItemChangeHandler() {}
 }
