@@ -31,26 +31,22 @@ export default class Films {
     const index = this._films.findIndex((v) => v.id === id);
 
     if (index === -1) {
-      return false;
+      return;
     }
 
     this._films = [].concat(this._films.slice(0, index), film, this._films.slice(index + 1));
 
+    this._changedFilm = film;
+
     this._callHandlers(this._dataChangeHandlers);
-    return true;
   }
 
-  removeFilm(id) {
-    const index = this._films.findIndex((v) => v.id === id);
+  setChangedFilm(film) {
+    this._changedFilm = film;
+  }
 
-    if (index === -1) {
-      return false;
-    }
-
-    this._films = [].concat(this._films.slice(0, index), this._films.slice(index + 1));
-
-    this._callHandlers(this._dataChangeHandlers);
-    return true;
+  getChangedFilm() {
+    return this._changedFilm;
   }
 
   setFilter(filterType) {
@@ -64,6 +60,11 @@ export default class Films {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
+  }
+
+  removeDataChangeHandler(removableHandler) {
+    this._dataChangeHandlers = this._dataChangeHandlers
+      .filter((handler) => handler !== removableHandler);
   }
 
   _callHandlers(handlers) {

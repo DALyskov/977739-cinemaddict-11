@@ -59,7 +59,7 @@ const createComments = (comments, externalOption) => {
   );
 };
 
-const createFilmPopupTemplate = (film, comments, options = {}) => {
+const createFilmPopupTemplate = (film, comments, isComments, options = {}) => {
   const {title, genres, poster, description, rating, duration: durationMinute, releaseDate, originTitle, director, writers, actors, country, ageRating, fromWatchlist, isWatched, isFavorite} = film;
   const {newEmotionImg, newEmotionValue, newComment, externalOption} = options;
 
@@ -70,6 +70,7 @@ const createFilmPopupTemplate = (film, comments, options = {}) => {
   const writer = writers.join(`, `);
   const actor = actors.join(`, `);
   const genresMarkup = createGanre(genres);
+  const commentsErr = isComments ? `` : `Failed to load comments`;
   const comentsMarkup = createComments(comments, externalOption);
   const commentsCount = comments.length;
 
@@ -174,8 +175,9 @@ const createFilmPopupTemplate = (film, comments, options = {}) => {
 
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
-
+          ${isComments ?
+      `<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>` :
+      `<h3 class="film-details__comments-title">${commentsErr}</h3>`}
             <ul class="film-details__comments-list">
             ${comentsMarkup}
             </ul>
@@ -217,10 +219,11 @@ const createFilmPopupTemplate = (film, comments, options = {}) => {
 };
 
 export default class FilmPopup extends AbstractSmartComponent {
-  constructor(film, filmComments) {
+  constructor(film, filmComments, isComments) {
     super();
     this._film = film;
     this._filmComments = filmComments;
+    this._isComments = isComments;
 
     this._newEmotionImg = ``;
     this._newEmotionValue = ``;
@@ -231,7 +234,7 @@ export default class FilmPopup extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createFilmPopupTemplate(this._film, this._filmComments, {
+    return createFilmPopupTemplate(this._film, this._filmComments, this._isComments, {
       newEmotionImg: this._newEmotionImg,
       newEmotionValue: this._newEmotionValue,
       newComment: this._newComment,
@@ -239,14 +242,28 @@ export default class FilmPopup extends AbstractSmartComponent {
     });
   }
 
+  setData(film, filmComments = this._filmComments) {
+    this._film = film;
+    this._filmComments = filmComments;
+  }
+
   getData() {
     const form = this.getElm().querySelector(`.film-details__inner`);
     return new FormData(form);
   }
 
-  setOption(option) {
-    this._externalOption = Object.assign({}, DefaultOption, option);
+  setOption(defaultOption, newCommentOption = false) {
+    this._externalOption = Object.assign({}, DefaultOption, defaultOption);
+    if (newCommentOption) {
+      this._newEmotionImg = ``;
+      this._newEmotionValue = ``;
+      this._newComment = ``;
+    }
     this.rerender();
+  }
+
+  changeCommentsStatus() {
+    this._isComments = !this._isComments;
   }
 
   recoveryListeners() {

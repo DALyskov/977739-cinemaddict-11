@@ -15,11 +15,9 @@ export default class Comments {
     const index = this._comments.findIndex((v) => v.id === id);
 
     if (index === -1) {
-      return false;
+      return;
     }
 
     this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
-
-    return true;
   }
 }
