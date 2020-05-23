@@ -16,7 +16,7 @@ const SHOWING_FILM_COUNT_ON_START = 5;
 const SHOWING_FILM_COUNT_BY_BUTTON = 5;
 const FILM_EXTRA_COUNT = 2;
 
-const contentExtraType = new Map([
+const contentExtraTypes = new Map([
   [`rating`, `Top rated`],
   [`comments`, `Most commented`],
 ]);
@@ -215,7 +215,7 @@ export default class PageController {
     if (this._listExtraComponents.length !== 0) {
       this._listExtraComponents.forEach((component) => remove(component));
     }
-    contentExtraType.forEach((title, sortExtraType) => {
+    contentExtraTypes.forEach((title, sortExtraType) => {
       const rndFilms = getRndArrFromArr(this._filmsModel.getFilmsAll());
       rndFilms.sort((a, b) => {
         a = a[sortExtraType].length || a[sortExtraType];

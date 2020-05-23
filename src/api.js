@@ -8,8 +8,16 @@ const Method = {
   DELETE: `DELETE`,
 };
 
+const responseCode = {
+  SUCCESS: 200,
+  REDIRECTION: 300,
+};
+
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (
+    response.status >= responseCode.SUCCESS &&
+    response.status < responseCode.REDIRECTION
+  ) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -66,7 +74,6 @@ export default class API {
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
-
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {
