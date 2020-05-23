@@ -27,31 +27,31 @@ export default class Film {
 
   toRAW() {
     return {
-      "id": this.id,
-      "comments": this.comments,
-      "film_info": {
-        "title": this.title,
-        "alternative_title": this.originTitle,
-        "total_rating": this.rating,
-        "poster": this.poster,
-        "age_rating": this.ageRating,
-        "director": this.director,
-        "writers": this.writers,
-        "actors": this.actors,
-        "release": {
-          "date": this.releaseDate.toISOString(),
-          "release_country": this.country.join()
+      'id': this.id,
+      'comments': this.comments,
+      'film_info': {
+        'title': this.title,
+        'alternative_title': this.originTitle,
+        'total_rating': this.rating,
+        'poster': this.poster,
+        'age_rating': this.ageRating,
+        'director': this.director,
+        'writers': this.writers,
+        'actors': this.actors,
+        'release': {
+          'date': this.releaseDate.toISOString(),
+          'release_country': this.country.join(),
         },
-        "runtime": this.duration,
-        "genre": this.genres,
-        "description": this.description
+        'runtime': this.duration,
+        'genre': this.genres,
+        'description': this.description,
       },
-      "user_details": {
-        "watchlist": this.fromWatchlist,
-        "already_watched": this.isWatched,
-        "watching_date": this.watchingDate.toISOString(),
-        "favorite": this.isFavorite
-      }
+      'user_details': {
+        'watchlist': this.fromWatchlist,
+        'already_watched': this.isWatched,
+        'watching_date': this.watchingDate.toISOString(),
+        'favorite': this.isFavorite,
+      },
     };
   }
 

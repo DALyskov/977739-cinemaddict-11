@@ -7,21 +7,20 @@ export const SortType = {
 };
 
 const createSortMarkup = (sortType, currentSortType) => {
-  const isActive = (sortType === currentSortType);
-  return (
-    `<li><a href="#" class="sort__button ${isActive ?
-      `sort__button--active` : ``}" data-sort-type='${sortType}'>Sort by ${sortType}</a></li>`
-  );
+  const isActive = sortType === currentSortType;
+  return `<li><a href="#" class="sort__button ${
+    isActive ? `sort__button--active` : ``
+  }" data-sort-type='${sortType}'>Sort by ${sortType}</a></li>`;
 };
 
 const createSortingTemplate = (currentSortType) => {
-  const sortsMarkup = Object.values(SortType).map((v) => createSortMarkup(v, currentSortType)).join(`\n`);
+  const sortsMarkup = Object.values(SortType)
+    .map((sortType) => createSortMarkup(sortType, currentSortType))
+    .join(`\n`);
 
-  return (
-    `<ul class="sort">
+  return `<ul class="sort">
       ${sortsMarkup}
-    </ul>`
-  );
+    </ul>`;
 };
 
 export default class Sorting extends AbstractSmartComponent {
@@ -35,12 +34,12 @@ export default class Sorting extends AbstractSmartComponent {
     return createSortingTemplate(this._currentSortType);
   }
 
-  getSortType() {
-    return this._currentSortType;
-  }
-
   recoveryListeners() {
     this.setSortTypeChangeHandler(this._onSortTypeChange);
+  }
+
+  getSortType() {
+    return this._currentSortType;
   }
 
   setSortTypeDefault() {

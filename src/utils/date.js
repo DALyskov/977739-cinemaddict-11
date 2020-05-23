@@ -10,8 +10,8 @@ export const formatDuration = (date) => {
 export const formatReleaseDate = (date, isFullDate = false) => {
   const d = moment(date);
 
-  const releaseDateString = isFullDate ?
-    `${d.day()} ${d.format(`MMMM`)} ${d.year()}`
+  const releaseDateString = isFullDate
+    ? `${d.day()} ${d.format(`MMMM`)} ${d.year()}`
     : `${d.year()}`;
 
   return releaseDateString;
@@ -21,7 +21,8 @@ export const formatCommentDate = (date) => {
   const d = moment(date);
   const dayAgo = moment(new Date()).diff(d, `day`);
 
-  const commentDateString = (dayAgo > 1) ? d.format(`YYYY/M/D H:mm`) : d.fromNow();
+  const commentDateString =
+    dayAgo > 1 ? d.format(`YYYY/M/D H:mm`) : d.fromNow();
 
   return commentDateString;
 };

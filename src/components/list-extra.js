@@ -1,11 +1,9 @@
 import AbstractComponent from './abstract-component.js';
 
 const createListExtraTemplate = (title) => {
-  return (
-    `<section class="films-list--extra">
+  return `<section class="films-list--extra">
       <h2 class="films-list__title">${title}</h2>
-    </section>`
-  );
+    </section>`;
 };
 
 export default class ListExtra extends AbstractComponent {

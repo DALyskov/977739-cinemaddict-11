@@ -5,9 +5,11 @@ import {RenderPosition, render, replace} from '../utils/render.js';
 import FilterComponent from '../components/filter.js';
 
 export default class FilterController {
-  constructor(container, filmsModel) {
+  constructor(container, filmsModel, onMenuItemChangeHandler) {
     this._container = container;
     this._filmsModel = filmsModel;
+    this.onMenuItemChangeHandler = onMenuItemChangeHandler;
+
     this._activeMenuItem = FilterType.ALL;
 
     this._onFilterChange = this._onFilterChange.bind(this);
@@ -21,7 +23,8 @@ export default class FilterController {
     const filters = Object.values(FilterType).map((filterType) => {
       return {
         name: filterType,
-        count: getFilmByFilter(this._filmsModel.getFilmsAll(), filterType).length,
+        count: getFilmByFilter(this._filmsModel.getFilmsAll(), filterType)
+          .length,
         checked: filterType === this._activeMenuItem,
       };
     });
@@ -49,7 +52,6 @@ export default class FilterController {
       this.render();
       this.onMenuItemChangeHandler(isFilterTypeStats);
     } else {
-
       if (this._activeMenuItem === MENU_ITEM_STATS) {
         this.onMenuItemChangeHandler(isFilterTypeStats);
       }
@@ -58,6 +60,4 @@ export default class FilterController {
       this._filmsModel.setFilter(filterType);
     }
   }
-
-  // _onMenuItemChangeHandler() {}
 }

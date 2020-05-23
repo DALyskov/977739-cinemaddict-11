@@ -6,7 +6,7 @@ import FilmListComponent from '../components/films-list.js';
 import ListContainerComponent from '../components/list-container.js';
 import ListExtraComponent from '../components/list-extra.js';
 import LoadingComponent from '../components/loading.js';
-import LoadingErrComponent from '../components/loading-err.js'; /* Err */
+import LoadingErrComponent from '../components/loading-err.js';
 import ShowMoreBtnComponent from '../components/show-more-btn.js';
 import SortingComponent, {SortType} from '../components/sorting.js';
 
@@ -18,7 +18,7 @@ const FILM_EXTRA_COUNT = 2;
 
 const contentExtraType = new Map([
   [`rating`, `Top rated`],
-  [`comments`, `Most commented`]
+  [`comments`, `Most commented`],
 ]);
 
 const getSortedFilms = (films, sortType, from, to) => {
@@ -38,7 +38,18 @@ const getSortedFilms = (films, sortType, from, to) => {
   return sortedFilms.slice(from, to);
 };
 
-const renderFilms = (container, popupContainer, films, comments, onFilmsDataChange, onViewChange, onCommentsDataChange, api, filmsModel, isListContainer = true) => {
+const renderFilms = (
+    container,
+    popupContainer,
+    films,
+    comments,
+    onFilmsDataChange,
+    onViewChange,
+    onCommentsDataChange,
+    api,
+    filmsModel,
+    isListContainer = true
+) => {
   let listContainer = container;
 
   if (isListContainer) {
@@ -48,7 +59,16 @@ const renderFilms = (container, popupContainer, films, comments, onFilmsDataChan
   }
 
   return films.map((film) => {
-    const filmController = new FilmController(listContainer, popupContainer, onFilmsDataChange, onViewChange, onCommentsDataChange, comments, api, filmsModel);
+    const filmController = new FilmController(
+        listContainer,
+        popupContainer,
+        onFilmsDataChange,
+        onViewChange,
+        onCommentsDataChange,
+        comments,
+        api,
+        filmsModel
+    );
 
     filmController.render(film);
     return filmController;
@@ -69,7 +89,7 @@ export default class PageController {
 
     this._sortingComponent = new SortingComponent();
     this._loadingComponent = new LoadingComponent();
-    this._loadingErrComponent = new LoadingErrComponent(); /* err */
+    this._loadingErrComponent = new LoadingErrComponent();
     this._showMoreBtnComponent = new ShowMoreBtnComponent();
 
     this._listExtraComponents = [];
@@ -84,11 +104,9 @@ export default class PageController {
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onCommentsDataChange = this._onCommentsDataChange.bind(this);
     this._updateFilms = this._updateFilms.bind(this);
-    this._openPopup = this._openPopup.bind(this);
 
     this._filmsModel.setFilterChangeHandler(this._onFilterChange);
     this._filmsModel.setDataChangeHandler(this._updateFilms);
-    // this._filmsModel.setDataChangeHandler(this._openPopup);
   }
 
   hide() {
@@ -108,7 +126,9 @@ export default class PageController {
       isfilms = this._filmsModel.getFilmsAll().length !== 0 ? true : false;
     }
     this._filmsListComponent = new FilmListComponent(isfilms);
-    this._filmList = this._filmsListComponent.getElm().querySelector(`.films-list`);
+    this._filmList = this._filmsListComponent
+      .getElm()
+      .querySelector(`.films-list`);
 
     render(this._container, this._sortingComponent);
     render(this._container, this._filmsListComponent);
@@ -127,18 +147,13 @@ export default class PageController {
         this._commentsModel,
         this._showedFilmControllers
     );
-    this._listContainer = this._filmList.querySelector(`.films-list__container`);
+    this._listContainer = this._filmList.querySelector(
+        `.films-list__container`
+    );
 
     this._renderShowMoreBtn(this._filmList);
     this._renderListExtra();
   }
-
-  // _removeFilms() {
-  //   this._showedFilmControllers.forEach((filmController) => filmController.destroy());
-  //   this._showedFilmControllers = [];
-  //   this._showedFilmExtraControllers.forEach((filmController) => filmController.destroy());
-  //   this._showedFilmExtraControllers = [];
-  // }
 
   _removeFilms() {
     this._showedFilmControllers.forEach((filmController) => {
@@ -159,7 +174,13 @@ export default class PageController {
     this._showedFilmExtraControllers = [];
   }
 
-  _renderFilms(container, films, comments, controllers, isListContainer = true) {
+  _renderFilms(
+      container,
+      films,
+      comments,
+      controllers,
+      isListContainer = true
+  ) {
     const newFilms = renderFilms(
         container,
         this._popupContainer,
@@ -174,11 +195,15 @@ export default class PageController {
     );
     switch (controllers) {
       case this._showedFilmControllers:
-        this._showedFilmControllers = this._showedFilmControllers.concat(newFilms);
+        this._showedFilmControllers = this._showedFilmControllers.concat(
+            newFilms
+        );
         this._showingFilmsCount = this._showedFilmControllers.length;
         break;
       case this._showedFilmExtraControllers:
-        this._showedFilmExtraControllers = this._showedFilmExtraControllers.concat(newFilms);
+        this._showedFilmExtraControllers = this._showedFilmExtraControllers.concat(
+            newFilms
+        );
         break;
     }
   }
@@ -188,7 +213,7 @@ export default class PageController {
       return;
     }
     if (this._listExtraComponents.length !== 0) {
-      this._listExtraComponents.forEach((v) => remove(v));
+      this._listExtraComponents.forEach((component) => remove(component));
     }
     contentExtraType.forEach((title, sortExtraType) => {
       const rndFilms = getRndArrFromArr(this._filmsModel.getFilmsAll());
@@ -198,7 +223,10 @@ export default class PageController {
         return b - a;
       });
 
-      if (rndFilms[0][sortExtraType].length === 0 || rndFilms[0][sortExtraType] === 0) {
+      if (
+        rndFilms[0][sortExtraType].length === 0 ||
+        rndFilms[0][sortExtraType] === 0
+      ) {
         return;
       }
 
@@ -225,11 +253,23 @@ export default class PageController {
 
     this._showMoreBtnComponent.setClickHendler(() => {
       const prevFilmsCount = this._showingFilmsCount;
-      this._showingFilmsCount = this._showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
+      this._showingFilmsCount =
+        this._showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
 
-      const sortedFilms = getSortedFilms(this._filmsModel.getFilms(), this._sortingComponent.getSortType(), prevFilmsCount, this._showingFilmsCount);
+      const sortedFilms = getSortedFilms(
+          this._filmsModel.getFilms(),
+          this._sortingComponent.getSortType(),
+          prevFilmsCount,
+          this._showingFilmsCount
+      );
 
-      this._renderFilms(this._listContainer, sortedFilms, this._commentsModel, this._showedFilmControllers, false);
+      this._renderFilms(
+          this._listContainer,
+          sortedFilms,
+          this._commentsModel,
+          this._showedFilmControllers,
+          false
+      );
 
       if (this._showingFilmsCount >= this._filmsModel.getFilms().length) {
         remove(this._showMoreBtnComponent);
@@ -239,34 +279,24 @@ export default class PageController {
   }
 
   renderErr() {
-    render(this._filmList, this._loadingErrComponent, RenderPosition.AFTERBEGIN);
+    render(
+        this._filmList,
+        this._loadingErrComponent,
+        RenderPosition.AFTERBEGIN
+    );
     setTimeout(remove, 5000, this._loadingErrComponent);
-  }
-
-  _openPopup() {
-    // this._showedFilmControllers.forEach((filmController) => {
-    //   if (filmController._film.id === this._openedPopupFilmId) {
-    //     filmController.renderPopup();
-    //     this._openedPopupFilmId = null;
-
-
-    //     // this.changingFilmcontroller.onCloseBtnClick();
-    //     // this.changingFilmcontroller.destroy();
-    //     this.changingFilmcontroller._filmPopupComponent.rerender();
-    //   }
-    // });
-  }
-
-  _onViewChange() {
-    this._showedFilmControllers.forEach((v) => v.setDefaultView());
-    this._showedFilmExtraControllers.forEach((v) => v.setDefaultView());
   }
 
   _updateFilms() {
     if (this._filmsListComponent === null) {
       return;
     }
-    const sortedFilms = getSortedFilms(this._filmsModel.getFilms(), this._sortingComponent.getSortType(), 0, this._showingFilmsCount);
+    const sortedFilms = getSortedFilms(
+        this._filmsModel.getFilms(),
+        this._sortingComponent.getSortType(),
+        0,
+        this._showingFilmsCount
+    );
     this._removeFilms();
     this._renderFilms(
         this._listContainer,
@@ -279,34 +309,6 @@ export default class PageController {
     this._renderListExtra();
   }
 
-  // _onFilmsDataChange(oldData, newData, popupStatus, controller) {
-  //   if (popupStatus) {
-  //     this._openedPopupFilmId = oldData.id;
-  //   }
-
-  //   this._oldShowedFilmControllers = this._showedFilmControllers.slice();
-  //   this._oldShowedFilmControllersExtra = this._showedFilmExtraControllers.slice();
-
-  //   this._removeFilms();
-  //   remove(this._showMoreBtnComponent);
-  //   this._listExtraComponents.forEach((v) => remove(v));
-  //   render(this._filmList, this._loadingComponent, RenderPosition.AFTERBEGIN);
-
-  //   this._api.updateFilm(oldData.id, newData)
-  //     .then((filmModel) => {
-  //       this._filmsModel.updateFilm(oldData.id, filmModel);
-  //     })
-  //     .catch(() => {
-  //       this._showedFilmControllers = this._oldShowedFilmControllers.slice();
-  //       this._showedFilmExtraControllers = this._oldShowedFilmControllersExtra.slice();
-  //       this._oldShowedFilmControllers = [];
-  //       this._oldShowedFilmControllersExtra = [];
-  //       this.renderErr();
-  //       this._updateFilms();
-  //       this._openPopup();
-  //     });
-  // }
-
   _onFilmsDataChange(oldData, newData, popupStatus, controller) {
     if (popupStatus) {
       this._openedPopupFilmId = oldData.id;
@@ -318,13 +320,13 @@ export default class PageController {
 
     this._removeFilms();
     remove(this._showMoreBtnComponent);
-    this._listExtraComponents.forEach((v) => remove(v));
+    this._listExtraComponents.forEach((component) => remove(component));
     render(this._filmList, this._loadingComponent, RenderPosition.AFTERBEGIN);
 
-    this._api.updateFilm(oldData.id, newData)
+    this._api
+      .updateFilm(oldData.id, newData)
       .then((filmModel) => {
         this._filmsModel.updateFilm(oldData.id, filmModel);
-
       })
       .catch(() => {
         this._showedFilmControllers = this._oldShowedFilmControllers.slice();
@@ -342,7 +344,8 @@ export default class PageController {
     this.changingFilmcontroller = controller;
 
     if (newComment === null) {
-      this._api.deleteComment(oldCommentId)
+      this._api
+        .deleteComment(oldCommentId)
         .then(() => {
           this._commentsModel.removeComment(oldCommentId);
           return this._api.getFilms();
@@ -356,30 +359,28 @@ export default class PageController {
           this._filmsModel.setFilms(films);
         })
         .catch(() => {
-          // this._showedFilmControllers.forEach((filmController) => {
-          //   if (filmController._film.id === this._openedPopupFilmId) {
-          //     filmController.shake(ShakingElm.COMMENT);
-          //     this._openedPopupFilmId = null;
-          //   }
-          // });
           this.changingFilmcontroller.shake(ShakingElm.COMMENT);
         });
     } else {
-      this._api.createComment(filmId, newComment)
+      this._api
+        .createComment(filmId, newComment)
         .then(({updatedFilm, updatedCommens}) => {
           this._commentsModel.setComments(updatedCommens);
           this._filmsModel.updateFilm(updatedFilm.id, updatedFilm);
         })
         .catch(() => {
-          // this._showedFilmControllers.forEach((filmController) => {
-          //   if (filmController._film.id === this._openedPopupFilmId) {
-          //     filmController.shake(ShakingElm.NEW_COMMENT);
-          //     this._openedPopupFilmId = null;
-          //   }
-          // });
           this.changingFilmcontroller.shake(ShakingElm.NEW_COMMENT);
         });
     }
+  }
+
+  _onViewChange() {
+    this._showedFilmControllers.forEach((controller) =>
+      controller.setDefaultView()
+    );
+    this._showedFilmExtraControllers.forEach((controller) =>
+      controller.setDefaultView()
+    );
   }
 
   _onFilterChange() {

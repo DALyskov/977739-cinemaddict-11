@@ -2,9 +2,7 @@ import AbstractSmartComponent from './abstract-smart-component';
 
 const createFooterStatisticsTemplate = (countFilms) => {
   countFilms = countFilms.toLocaleString();
-  return (
-    `<p>${countFilms} movies inside</p>`
-  );
+  return `<p>${countFilms} movies inside</p>`;
 };
 
 export default class FooterStatistics extends AbstractSmartComponent {
@@ -17,7 +15,9 @@ export default class FooterStatistics extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createFooterStatisticsTemplate(this._filmsModel.getFilmsAll().length);
+    return createFooterStatisticsTemplate(
+        this._filmsModel.getFilmsAll().length
+    );
   }
 
   recoveryListeners() {}

@@ -1,5 +1,5 @@
 import {getRank} from '../utils/common.js';
-import AbstractSmartComponent from "./abstract-smart-component.js";
+import AbstractSmartComponent from './abstract-smart-component.js';
 import moment from 'moment';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -22,56 +22,62 @@ const renderChart = (container, genres, genresCounts) => {
     type: `horizontalBar`,
     data: {
       labels: genres,
-      datasets: [{
-        data: genresCounts,
-        backgroundColor: `#ffe800`,
-        hoverBackgroundColor: `#ffe800`,
-        anchor: `start`
-      }]
+      datasets: [
+        {
+          data: genresCounts,
+          backgroundColor: `#ffe800`,
+          hoverBackgroundColor: `#ffe800`,
+          anchor: `start`,
+        },
+      ],
     },
     options: {
       plugins: {
         datalabels: {
           font: {
-            size: 20
+            size: 20,
           },
           color: `#ffffff`,
           anchor: `start`,
           align: `start`,
           offset: 40,
-        }
+        },
       },
       scales: {
-        yAxes: [{
-          ticks: {
-            fontColor: `#ffffff`,
-            padding: 100,
-            fontSize: 20
+        yAxes: [
+          {
+            ticks: {
+              fontColor: `#ffffff`,
+              padding: 100,
+              fontSize: 20,
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false,
+            },
+            barThickness: 24,
           },
-          gridLines: {
-            display: false,
-            drawBorder: false
+        ],
+        xAxes: [
+          {
+            ticks: {
+              display: false,
+              beginAtZero: true,
+            },
+            gridLines: {
+              display: false,
+              drawBorder: false,
+            },
           },
-          barThickness: 24
-        }],
-        xAxes: [{
-          ticks: {
-            display: false,
-            beginAtZero: true
-          },
-          gridLines: {
-            display: false,
-            drawBorder: false
-          },
-        }],
+        ],
       },
       legend: {
-        display: false
+        display: false,
       },
       tooltips: {
-        enabled: false
-      }
-    }
+        enabled: false,
+      },
+    },
   });
   return myChart;
 };
@@ -80,26 +86,26 @@ const compareDate = (watchedFilms, period) => {
   return watchedFilms.filter((film) => {
     const periodDate = moment().subtract(period, `day`);
     const watchingDate = moment(new Date(film.watchingDate));
-    return (periodDate < watchingDate);
+    return periodDate < watchingDate;
   });
 };
 
 const getFilmsByPeriod = (watchedFilms, activStatFilter) => {
   let watchedFilmsBypPeriod = [];
   switch (activStatFilter) {
-    case StatFilter.ALL_TIME :
+    case StatFilter.ALL_TIME:
       watchedFilmsBypPeriod = watchedFilms;
       break;
-    case StatFilter.TODAY :
+    case StatFilter.TODAY:
       watchedFilmsBypPeriod = compareDate(watchedFilms, 1);
       break;
-    case StatFilter.WEEK :
+    case StatFilter.WEEK:
       watchedFilmsBypPeriod = compareDate(watchedFilms, 7);
       break;
-    case StatFilter.MONTH :
+    case StatFilter.MONTH:
       watchedFilmsBypPeriod = compareDate(watchedFilms, 30);
       break;
-    case StatFilter.YEAR :
+    case StatFilter.YEAR:
       watchedFilmsBypPeriod = compareDate(watchedFilms, 365);
       break;
   }
@@ -111,16 +117,19 @@ const getFilterNameById = (id) => {
 };
 
 const createFilterMarkup = (filter, activStatFilter) => {
-  const check = (filter === activStatFilter) ? `checked` : ``;
+  const check = filter === activStatFilter ? `checked` : ``;
   let labelContent = filter.split(`-`).join(` `);
   labelContent = labelContent[0].toUpperCase() + labelContent.substring(1);
-  return (
-    `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${filter}" value="${filter}" ${check}>
-    <label for="statistic-${filter}" class="statistic__filters-label">${labelContent}</label>`
-  );
+  return `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${filter}" value="${filter}" ${check}>
+    <label for="statistic-${filter}" class="statistic__filters-label">${labelContent}</label>`;
 };
 
-const createStatsTemplate = (watchedFilms, watchedFilmsByPeriod, genresWithCount, activStatFilter) => {
+const createStatsTemplate = (
+    watchedFilms,
+    watchedFilmsByPeriod,
+    genresWithCount,
+    activStatFilter
+) => {
   const rank = getRank(watchedFilms.length);
   const watchedFilmsCount = watchedFilmsByPeriod.length;
   const rawDuration = watchedFilmsByPeriod.reduce((acc, obj) => {
@@ -129,13 +138,13 @@ const createStatsTemplate = (watchedFilms, watchedFilmsByPeriod, genresWithCount
   }, 0);
   const hour = Math.floor(rawDuration / 60);
   const minute = rawDuration % 60;
-  const topGenre = (watchedFilmsByPeriod.length > 0) ? genresWithCount[0][0] : ``;
+  const topGenre = watchedFilmsByPeriod.length > 0 ? genresWithCount[0][0] : ``;
 
   const filtersMarkup = Object.entries(StatFilter)
-    .map((it) => createFilterMarkup(it[1], activStatFilter)).join(`\n`);
+    .map((filter) => createFilterMarkup(filter[1], activStatFilter))
+    .join(`\n`);
 
-  return (
-    `<section class="statistic">
+  return `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -150,7 +159,9 @@ const createStatsTemplate = (watchedFilms, watchedFilmsByPeriod, genresWithCount
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${watchedFilmsCount} <span class="statistic__item-description">movie${watchedFilmsCount > 1 ? `s` : ``}</span></p>
+        <p class="statistic__item-text">${watchedFilmsCount} <span class="statistic__item-description">movie${
+  watchedFilmsCount > 1 ? `s` : ``
+}</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
@@ -166,8 +177,7 @@ const createStatsTemplate = (watchedFilms, watchedFilmsByPeriod, genresWithCount
       <canvas class="statistic__chart" width="1000"></canvas>
     </div>
 
-  </section>`
-  );
+  </section>`;
 };
 
 export default class Stats extends AbstractSmartComponent {
@@ -195,8 +205,13 @@ export default class Stats extends AbstractSmartComponent {
 
   rerender() {
     this._watchedFilms = this._filmsModel.getWatchedFilms();
-    this._watchedFilmsByPeriod = getFilmsByPeriod(this._watchedFilms, this._activStatFilter);
-    this._genresWithCount = this._getGenresWithCount(this._watchedFilmsByPeriod);
+    this._watchedFilmsByPeriod = getFilmsByPeriod(
+        this._watchedFilms,
+        this._activStatFilter
+    );
+    this._genresWithCount = this._getGenresWithCount(
+        this._watchedFilmsByPeriod
+    );
 
     super.rerender();
     this._renderChart();
@@ -224,14 +239,15 @@ export default class Stats extends AbstractSmartComponent {
 
   _renderChart() {
     const statisticCtx = this.getElm().querySelector(`.statistic__chart`);
-    const genres = this._genresWithCount.map((v) => v[0]);
-    const genresCounts = this._genresWithCount.map((v) => v[1]);
+    const genres = this._genresWithCount.map((genre) => genre[0]);
+    const genresCounts = this._genresWithCount.map((genre) => genre[1]);
 
     renderChart(statisticCtx, genres, genresCounts);
   }
 
   _setFilterChange() {
-    this.getElm().querySelector(`.statistic__filters`)
+    this.getElm()
+      .querySelector(`.statistic__filters`)
       .addEventListener(`change`, (evt) => {
         this._activStatFilter = getFilterNameById(evt.target.id);
         this.rerender();

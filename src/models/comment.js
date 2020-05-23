@@ -9,9 +9,9 @@ export default class Comment {
 
   toRAW() {
     return {
-      "comment": this.content || ` `,
-      "date": this.date.toISOString(),
-      "emotion": this.emotion
+      'comment': this.content || ` `,
+      'date': this.date.toISOString(),
+      'emotion': this.emotion,
     };
   }
 

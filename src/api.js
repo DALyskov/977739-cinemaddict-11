@@ -1,11 +1,11 @@
-import Film from './models/film.js';
 import Comment from './models/comment.js';
+import Film from './models/film.js';
 
 const Method = {
   GET: `GET`,
   POST: `POST`,
   PUT: `PUT`,
-  DELETE: `DELETE`
+  DELETE: `DELETE`,
 };
 
 const checkStatus = (response) => {
@@ -33,7 +33,7 @@ export default class API {
       url: `movies/${id}`,
       method: Method.PUT,
       body: JSON.stringify(data.toRAW()),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: new Headers({'Content-Type': `application/json`}),
     })
       .then((response) => response.json())
       .then(Film.parseFilm);
@@ -50,7 +50,7 @@ export default class API {
       url: `comments/${filmId}`,
       method: Method.POST,
       body: JSON.stringify(comment.toRAW()),
-      headers: new Headers({"Content-Type": `application/json`})
+      headers: new Headers({'Content-Type': `application/json`}),
     })
       .then((response) => response.json())
       .then(({movie, comments}) => {
