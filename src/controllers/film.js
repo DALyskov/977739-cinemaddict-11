@@ -43,6 +43,7 @@ export default class FilmController {
     this._api = api;
     this._filmsModel = filmsModel;
 
+    this._filmComments = [];
     this._popupStatus = PopupStatus.СLOSED;
 
     this._onFilmClick = this._onFilmClick.bind(this);
@@ -104,6 +105,7 @@ export default class FilmController {
             },
             true
         );
+        console.log(`rerender setOption`);
         if (isShaking) {
           this.shake(ShakingElm.POPUP);
         }
@@ -148,7 +150,7 @@ export default class FilmController {
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 
-  _createPopup(comments, isComments = true) {
+  _createPopup(comments, isOnline, isComments = true) {
     this._commentsModel.setComments(comments);
     this._filmComments = this._commentsModel.getComments();
     this._filmPopupComponent = new FilmPopupComponent(
@@ -156,6 +158,7 @@ export default class FilmController {
         this._filmComments,
         isComments
     );
+
     this._filmPopupComponent.setCloseBtnClickHendler(this._onCloseBtnClick);
     document.addEventListener(`keydown`, this._onEscKeydown);
     this._filmPopupComponent.setWatchlistBtnClickHandler(
@@ -177,6 +180,13 @@ export default class FilmController {
         RenderPosition.AFTERBEGIN
     );
     this._popupStatus = PopupStatus.OPENED;
+
+    if (!isOnline) {
+      this._filmPopupComponent.setOption({
+        isOnline: false,
+      });
+    }
+    console.log(this._filmPopupComponent._externalOption);
   }
 
   _renderPopup() {
@@ -185,10 +195,13 @@ export default class FilmController {
     this._api
       .getComments(this._film.id)
       .then((comments) => {
-        this._createPopup(comments);
+        this._createPopup(comments, true);
       })
       .catch(() => {
-        this._createPopup([], false);
+        // console.log(err);
+        console.log(`false`);
+        this._createPopup(this._filmComments, false);
+        console.log(`false`);
       });
   }
 

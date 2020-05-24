@@ -18,6 +18,7 @@ const DefaultOption = {
   DELETING_COMMENT_ID: ``,
   FORM_ATTRIBUTE: ``,
   IS_SUBMIT_ERR: false,
+  IS_ONLINE: true,
 };
 
 const createGanre = (genres) => {
@@ -45,10 +46,21 @@ const createComments = (comments, externalOption) => {
       let deleteButtonText = DefaultOption.DELETE_BUTTON_TEXT;
       let btnAttribute = ``;
 
-      if (externalOption.deletingCommentId === id) {
-        deleteButtonText = externalOption.deleteButtonText;
+      if (externalOption.isOnline) {
+        if (externalOption.deletingCommentId === id) {
+          deleteButtonText = externalOption.deleteButtonText;
+          btnAttribute = `disabled`;
+        }
+      } else {
         btnAttribute = `disabled`;
       }
+
+      // if (externalOption.deletingCommentId === id) {
+      //   deleteButtonText = externalOption.deleteButtonText;
+      //   btnAttribute = `disabled`;
+      // }
+
+      // const disablingAttribute = externalOption.isOnline ? `` : `disabled`;
 
       return `<li class="film-details__comment">
           <span class="film-details__comment-emoji">
@@ -104,7 +116,10 @@ const createFilmPopupTemplate = (film, comments, isComments, options = {}) => {
   const comentsMarkup = createComments(comments, externalOption);
   const commentsCount = comments.length;
 
-  const disablingAttribute = externalOption.formAttribute;
+  // const disablingAttribute = externalOption.formAttribute;
+  const disablingAttribute = externalOption.isOnline
+    ? externalOption.formAttribute
+    : `disabled`;
   const inputStyle = externalOption.isSubmitErr
     ? `style="border: 2px solid red"`
     : ``;
@@ -262,6 +277,7 @@ export default class FilmPopup extends AbstractSmartComponent {
       deletingCommentId: DefaultOption.DELETING_COMMENT_ID,
       formAttribute: DefaultOption.FORM_ATTRIBUTE,
       isSubmitErr: DefaultOption.IS_SUBMIT_ERR,
+      isOnline: DefaultOption.IS_ONLINE,
     };
 
     this._setEmojiClickHandler();
@@ -294,6 +310,7 @@ export default class FilmPopup extends AbstractSmartComponent {
   rerender() {
     this.getElm();
     const scrollTop = this._elm.scrollTop;
+    console.log(this._externalOption);
     super.rerender();
     this._elm.scrollTop = scrollTop;
   }
