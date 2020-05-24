@@ -1,5 +1,7 @@
 import {render} from './utils/render.js';
-import API from './api.js';
+import API from './api/index.js';
+import Provider from './api/provider.js';
+import Store from './api/store.js';
 
 import FooterStatisticsComponent from './components/footer-statistics.js';
 import ProfileComponent from './components/profile.js';
@@ -13,6 +15,10 @@ import FilmsModel from './models/films.js';
 
 const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
 const AUTHORIZATION = `Basic is_best_of_the_best_projects=true`;
+
+const STORE_PREFIX = `cinemaddict-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const headerElm = document.querySelector(`.header`);
 const mainElm = document.querySelector(`.main`);
@@ -29,6 +35,8 @@ const onMenuItemChangeHandler = (isStatsTarget) => {
 };
 
 const api = new API(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 const filmsModel = new FilmsModel();
 const commentsModel = new CommentsModel();
 const filterController = new FilterController(
@@ -41,7 +49,7 @@ const pageController = new PageController(
     footerElm,
     filmsModel,
     commentsModel,
-    api
+    apiWithProvider
 );
 const statsComponent = new StatsComponent(filmsModel);
 const profileComponent = new ProfileComponent(filmsModel);
@@ -53,7 +61,7 @@ filterController.render();
 render(headerElm, profileComponent);
 render(footerElm, footerStatisticsComponent);
 
-api
+apiWithProvider
   .getFilms()
   .then((films) => {
     filmsModel.setFilms(films);
@@ -63,3 +71,19 @@ api
     pageController.render(false);
     pageController.renderErr();
   });
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`).then();
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+  if (apiWithProvider.getSynceStatus()) {
+    return;
+  }
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});

@@ -3,7 +3,7 @@ export default class Comment {
     this.id = data[`id`];
     this.author = data[`author`];
     this.content = data[`comment`];
-    this.date = new Date(`${data[`date`]}`);
+    this.date = new Date(data[`date`]);
     this.emotion = data[`emotion`];
   }
 

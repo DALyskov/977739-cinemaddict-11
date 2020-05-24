@@ -1,5 +1,5 @@
-import Comment from './models/comment.js';
-import Film from './models/film.js';
+import Comment from '../models/comment.js';
+import Film from '../models/film.js';
 
 const Method = {
   GET: `GET`,
@@ -8,15 +8,15 @@ const Method = {
   DELETE: `DELETE`,
 };
 
-const responseCode = {
+const ResponseCode = {
   SUCCESS: 200,
   REDIRECTION: 300,
 };
 
 const checkStatus = (response) => {
   if (
-    response.status >= responseCode.SUCCESS &&
-    response.status < responseCode.REDIRECTION
+    response.status >= ResponseCode.SUCCESS &&
+    response.status < ResponseCode.REDIRECTION
   ) {
     return response;
   } else {
@@ -36,15 +36,24 @@ export default class API {
       .then(Film.parseFilms);
   }
 
-  updateFilm(id, data) {
+  updateFilm(id, film) {
     return this._load({
       url: `movies/${id}`,
       method: Method.PUT,
-      body: JSON.stringify(data.toRAW()),
+      body: JSON.stringify(film.toRAW()),
       headers: new Headers({'Content-Type': `application/json`}),
     })
       .then((response) => response.json())
       .then(Film.parseFilm);
+  }
+
+  sync(films) {
+    return this._load({
+      url: `movies/sync`,
+      method: Method.POST,
+      body: JSON.stringify(films),
+      headers: new Headers({'Content-Type': `application/json`}),
+    }).then((response) => response.json());
   }
 
   getComments(id) {

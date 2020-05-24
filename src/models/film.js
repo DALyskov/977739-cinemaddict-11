@@ -11,7 +11,7 @@ export default class Film {
     this.director = data[`film_info`][`director`];
     this.writers = data[`film_info`][`writers`];
     this.actors = data[`film_info`][`actors`];
-    this.releaseDate = new Date(`${data[`film_info`][`release`][`date`]}`);
+    this.releaseDate = new Date(data[`film_info`][`release`][`date`]);
 
     this.country = [data[`film_info`][`release`][`release_country`]];
 
@@ -21,7 +21,7 @@ export default class Film {
 
     this.fromWatchlist = data[`user_details`][`watchlist`];
     this.isWatched = data[`user_details`][`already_watched`];
-    this.watchingDate = new Date(`${data[`user_details`][`watching_date`]}`);
+    this.watchingDate = new Date(data[`user_details`][`watching_date`]);
     this.isFavorite = data[`user_details`][`favorite`];
   }
 
