@@ -54,13 +54,6 @@ const createComments = (comments, externalOption) => {
         btnAttribute = `disabled`;
       }
 
-      // if (externalOption.deletingCommentId === id) {
-      //   deleteButtonText = externalOption.deleteButtonText;
-      //   btnAttribute = `disabled`;
-      // }
-
-      // const disablingAttribute = externalOption.isOnline ? `` : `disabled`;
-
       return `<li class="film-details__comment">
           <span class="film-details__comment-emoji">
             <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-${emotion}">
@@ -111,11 +104,10 @@ const createFilmPopupTemplate = (film, comments, isComments, options = {}) => {
   const writer = writers.join(`, `);
   const actor = actors.join(`, `);
   const genresMarkup = createGanre(genres);
-  const commentsErr = isComments ? `` : `Failed to load comments`;
+  const commentsErr =
+    isComments && externalOption.isOnline ? `` : `Failed to update comments`;
   const comentsMarkup = createComments(comments, externalOption);
   const commentsCount = comments.length;
-
-  // const disablingAttribute = externalOption.formAttribute;
   const disablingAttribute = externalOption.isOnline
     ? externalOption.formAttribute
     : `disabled`;
@@ -218,7 +210,7 @@ const createFilmPopupTemplate = (film, comments, isComments, options = {}) => {
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
           ${
-  isComments
+  isComments && externalOption.isOnline
     ? `<h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>`
     : `<h3 class="film-details__comments-title">${commentsErr}</h3>`
 }

@@ -334,7 +334,9 @@ export default class PageController {
         this._oldShowedFilmControllers = [];
         this._oldShowedFilmControllersExtra = [];
         this.renderErr();
+        this._filmsModel.setChangedFilm(oldData);
         this._updateFilms();
+
         this.changingFilmcontroller.rerenderPopup(true);
       });
   }
