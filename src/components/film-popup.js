@@ -18,7 +18,6 @@ const DefaultOption = {
   DELETING_COMMENT_ID: ``,
   FORM_ATTRIBUTE: ``,
   IS_SUBMIT_ERR: false,
-  IS_ONLINE: true,
 };
 
 const createGanre = (genres) => {
@@ -277,10 +276,11 @@ export default class FilmPopup extends AbstractSmartComponent {
       deletingCommentId: DefaultOption.DELETING_COMMENT_ID,
       formAttribute: DefaultOption.FORM_ATTRIBUTE,
       isSubmitErr: DefaultOption.IS_SUBMIT_ERR,
-      isOnline: DefaultOption.IS_ONLINE,
+      isOnline: window.navigator.onLine,
     };
 
     this._setEmojiClickHandler();
+    this._setOnlineChangeHandler();
   }
 
   getTemplate() {
@@ -305,12 +305,12 @@ export default class FilmPopup extends AbstractSmartComponent {
     this.setWatchedBtnClickHandler(this._onWatchedBtnClick);
     this.setFavoriteBtnClickHandler(this._onFavoriteBtnClick);
     this._setEmojiClickHandler();
+    this._setOnlineChangeHandler();
   }
 
   rerender() {
     this.getElm();
     const scrollTop = this._elm.scrollTop;
-    console.log(this._externalOption);
     super.rerender();
     this._elm.scrollTop = scrollTop;
   }
@@ -325,8 +325,17 @@ export default class FilmPopup extends AbstractSmartComponent {
     return new FormData(form);
   }
 
+  setIsCommentsOption(value) {
+    this._isComments = value;
+  }
+
   setOption(newOption, newCommentOption = false) {
-    this._externalOption = Object.assign({}, DefaultOption, newOption);
+    this._externalOption.deleteButtonText = DefaultOption.DELETE_BUTTON_TEXT;
+    this._externalOption.deletingCommentId = DefaultOption.DELETING_COMMENT_ID;
+    this._externalOption.formAttribute = DefaultOption.FORM_ATTRIBUTE;
+    this._externalOption.isSubmitErr = DefaultOption.IS_SUBMIT_ERR;
+    this._externalOption = Object.assign(this._externalOption, newOption);
+
     if (newCommentOption) {
       this._newEmotionImg = ``;
       this._newEmotionValue = ``;
@@ -335,8 +344,8 @@ export default class FilmPopup extends AbstractSmartComponent {
     this.rerender();
   }
 
-  changeCommentsStatus() {
-    this._isComments = !this._isComments;
+  setCommentsStatus(newStatus) {
+    this._isComments = newStatus;
   }
 
   setCloseBtnClickHendler(handler) {
@@ -400,6 +409,15 @@ export default class FilmPopup extends AbstractSmartComponent {
         this._newComment = inputElm.value;
         this.rerender();
       });
+    });
+  }
+
+  _setOnlineChangeHandler() {
+    window.addEventListener(`online`, () => {
+      this._externalOption.isOnline = window.navigator.onLine;
+    });
+    window.addEventListener(`offline`, () => {
+      this._externalOption.isOnline = window.navigator.onLine;
     });
   }
 }

@@ -93,19 +93,24 @@ export default class FilmController {
   }
 
   rerenderPopup(isShaking = false) {
+    let changedFilm = this._filmsModel.getChangedFilm();
+    if (changedFilm.id !== this._film.id) {
+      changedFilm = null;
+    }
+
     const film = this._filmsModel.getChangedFilm() || this._film;
     this._film = film;
     this._api
       .getComments(this._film.id)
       .then((comments) => {
         this._filmPopupComponent.setData(film, comments);
+        this._filmPopupComponent.setCommentsStatus(true);
         this._filmPopupComponent.setOption(
             {
               formAttribute: ``,
             },
             true
         );
-        console.log(`rerender setOption`);
         if (isShaking) {
           this.shake(ShakingElm.POPUP);
         }
@@ -150,7 +155,7 @@ export default class FilmController {
     }, SHAKE_ANIMATION_TIMEOUT);
   }
 
-  _createPopup(comments, isOnline, isComments = true) {
+  _createPopup(comments, isComments = true) {
     this._commentsModel.setComments(comments);
     this._filmComments = this._commentsModel.getComments();
     this._filmPopupComponent = new FilmPopupComponent(
@@ -174,6 +179,34 @@ export default class FilmController {
     this._filmPopupComponent.setSubmitCommentHandler(this._onSubmitComment);
     this._filmsModel.setDataChangeHandler(this.rerenderPopup);
 
+    // window.addEventListener(`offline`, (evt) => {
+    //   console.log(evt);
+    //   this._filmPopupComponent.setOption({
+    //     isOnline: false,
+    //   });
+    // });
+
+    const setPopupOnlineOption = () => {
+      // this._filmPopupComponent.setOption({
+      //   isOnline: window.navigator.onLine,
+      // });
+      if (this._popupStatus === PopupStatus.OPENED) {
+        if (window.navigator.onLine) {
+          // this._filmPopupComponent.setIsCommentsOption(true);
+          // console.log(`run`, this._film.rating);
+
+          this._filmsModel.setChangedFilm(this._film);
+          this.rerenderPopup();
+          return;
+        }
+        // console.log(`run2`);
+        this._filmPopupComponent.rerender();
+      }
+    };
+
+    window.addEventListener(`offline`, setPopupOnlineOption);
+    window.addEventListener(`online`, setPopupOnlineOption);
+
     render(
         this._popupContainer,
         this._filmPopupComponent,
@@ -181,12 +214,12 @@ export default class FilmController {
     );
     this._popupStatus = PopupStatus.OPENED;
 
-    if (!isOnline) {
-      this._filmPopupComponent.setOption({
-        isOnline: false,
-      });
-    }
-    console.log(this._filmPopupComponent._externalOption);
+    // if (!isOnline) {
+    //   this._filmPopupComponent.setOption({
+    //     isOnline: false,
+    //   });
+    // }
+    // console.log(this._filmPopupComponent._externalOption);
   }
 
   _renderPopup() {
@@ -198,10 +231,7 @@ export default class FilmController {
         this._createPopup(comments, true);
       })
       .catch(() => {
-        // console.log(err);
-        console.log(`false`);
         this._createPopup(this._filmComments, false);
-        console.log(`false`);
       });
   }
 

@@ -38,7 +38,7 @@ export default class API {
 
   updateFilm(id, film) {
     return this._load({
-      url: `movies/${id}`,
+      url: `1movies/${id}`,
       method: Method.PUT,
       body: JSON.stringify(film.toRAW()),
       headers: new Headers({'Content-Type': `application/json`}),
@@ -78,7 +78,7 @@ export default class API {
   }
 
   deleteComment(commentId) {
-    return this._load({url: `comments/${commentId}`, method: Method.DELETE});
+    return this._load({url: `1comments/${commentId}`, method: Method.DELETE});
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

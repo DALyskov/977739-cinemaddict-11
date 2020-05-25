@@ -68,8 +68,6 @@ export default class Provider {
       return this._api.getComments(id);
     }
 
-    // // TODO: Реализовать логику при отсутствии интернета
-    // return Promise.reject(`offline logic is not implemented`);
     return Promise.resolve();
   }
 
@@ -78,8 +76,7 @@ export default class Provider {
       return this._api.createComment(filmId, comment);
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    return Promise.reject(`offline logic is not implemented and is not needed`);
   }
 
   deleteComment(commentId) {
@@ -87,7 +84,6 @@ export default class Provider {
       return this._api.deleteComment(commentId);
     }
 
-    // TODO: Реализовать логику при отсутствии интернета
-    return Promise.reject(`offline logic is not implemented`);
+    return Promise.reject(`offline logic is not implemented and is not needed`);
   }
 }

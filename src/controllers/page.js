@@ -342,7 +342,6 @@ export default class PageController {
   _onCommentsDataChange(oldCommentId, newComment, filmId, controller) {
     this._openedPopupFilmId = filmId;
     this.changingFilmcontroller = controller;
-
     if (newComment === null) {
       this._api
         .deleteComment(oldCommentId)
