@@ -11,12 +11,13 @@ export default class Film {
     this.director = data[`film_info`][`director`];
     this.writers = data[`film_info`][`writers`];
     this.actors = data[`film_info`][`actors`];
-    this.releaseDate = new Date(data[`film_info`][`release`][`date`]);
 
+    this.releaseDate = new Date(data[`film_info`][`release`][`date`]);
     this.country = [data[`film_info`][`release`][`release_country`]];
 
     this.duration = data[`film_info`][`runtime`];
-    this.genres = data[`film_info`][`genre`];
+    this.genres =
+      data[`film_info`][`genre`].length > 0 ? data[`film_info`][`genre`] : [``];
     this.description = data[`film_info`][`description`];
 
     this.fromWatchlist = data[`user_details`][`watchlist`];

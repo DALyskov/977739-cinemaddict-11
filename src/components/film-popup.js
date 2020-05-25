@@ -271,6 +271,7 @@ export default class FilmPopup extends AbstractSmartComponent {
       isOnline: window.navigator.onLine,
     };
 
+    this._onOnlineChange = this._onOnlineChange.bind(this);
     this._setEmojiClickHandler();
     this._setOnlineChangeHandler();
   }
@@ -297,7 +298,6 @@ export default class FilmPopup extends AbstractSmartComponent {
     this.setWatchedBtnClickHandler(this._onWatchedBtnClick);
     this.setFavoriteBtnClickHandler(this._onFavoriteBtnClick);
     this._setEmojiClickHandler();
-    this._setOnlineChangeHandler();
   }
 
   rerender() {
@@ -386,6 +386,11 @@ export default class FilmPopup extends AbstractSmartComponent {
     this._onSubmitComment = handler;
   }
 
+  removeOnlineChangeHandler() {
+    window.removeEventListener(`online`, this._onOnlineChange);
+    window.removeEventListener(`offline`, this._onOnlineChange);
+  }
+
   _setEmojiClickHandler() {
     const elm = this.getElm();
     const inputElm = elm.querySelector(`.film-details__comment-input`);
@@ -405,11 +410,11 @@ export default class FilmPopup extends AbstractSmartComponent {
   }
 
   _setOnlineChangeHandler() {
-    window.addEventListener(`online`, () => {
-      this._externalOption.isOnline = window.navigator.onLine;
-    });
-    window.addEventListener(`offline`, () => {
-      this._externalOption.isOnline = window.navigator.onLine;
-    });
+    window.addEventListener(`online`, this._onOnlineChange);
+    window.addEventListener(`offline`, this._onOnlineChange);
+  }
+
+  _onOnlineChange() {
+    this._externalOption.isOnline = window.navigator.onLine;
   }
 }

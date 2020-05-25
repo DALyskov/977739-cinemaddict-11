@@ -61,6 +61,8 @@ export default class FilmController {
 
     this._onCloseBtnClick = this._onCloseBtnClick.bind(this);
     this._onEscKeydown = this._onEscKeydown.bind(this);
+    this._onOffline = this._onOffline.bind(this);
+    this._onOnline = this._onOnline.bind(this);
 
     this.rerenderPopup = this.rerenderPopup.bind(this);
   }
@@ -123,7 +125,7 @@ export default class FilmController {
 
   setDefaultView() {
     if (this._popupStatus !== PopupStatus.СLOSED) {
-      remove(this._filmPopupComponent);
+      this._onCloseBtnClick();
     }
   }
 
@@ -180,19 +182,8 @@ export default class FilmController {
     this._filmPopupComponent.setSubmitCommentHandler(this._onSubmitComment);
     this._filmsModel.setDataChangeHandler(this.rerenderPopup);
 
-    const setPopupOnlineOption = () => {
-      if (this._popupStatus === PopupStatus.OPENED) {
-        if (window.navigator.onLine) {
-          this._filmsModel.setChangedFilm(this._film);
-          this.rerenderPopup();
-          return;
-        }
-        this._filmPopupComponent.rerender();
-      }
-    };
-
-    window.addEventListener(`offline`, setPopupOnlineOption);
-    window.addEventListener(`online`, setPopupOnlineOption);
+    window.addEventListener(`offline`, this._onOffline);
+    window.addEventListener(`online`, this._onOnline);
 
     render(
         this._popupContainer,
@@ -246,7 +237,6 @@ export default class FilmController {
       deleteButtonText: `Deleting…`,
       deletingCommentId: commentId,
     });
-
     this._deletingCommentElm = this._filmPopupComponent
       .getElm()
       .querySelector(
@@ -288,10 +278,32 @@ export default class FilmController {
     remove(this._filmPopupComponent);
     this._filmsModel.removeDataChangeHandler(this.rerenderPopup);
     document.removeEventListener(`keydown`, this._onEscKeydown);
+    window.removeEventListener(`offline`, this._onOffline);
+    window.removeEventListener(`online`, this._onOnline);
+    this._filmPopupComponent.removeOnlineChangeHandler();
     this._popupStatus = PopupStatus.СLOSED;
   }
 
   _onEscKeydown(keydownEvt) {
     checkKeyCode(this._onCloseBtnClick, keydownEvt);
+  }
+
+  _onOffline() {
+    if (this._popupStatus === PopupStatus.OPENED) {
+      this._filmPopupComponent.rerender();
+    }
+  }
+
+  _onOnline() {
+    if (this._popupStatus === PopupStatus.OPENED && window.navigator.onLine) {
+      window.removeEventListener(`offline`, this._onOffline);
+      window.removeEventListener(`online`, this._onOnline);
+      this._filmPopupComponent.removeOnlineChangeHandler();
+      // this._filmsModel.setChangedFilm(this._film);
+      // this.rerenderPopup();
+
+      remove(this._filmPopupComponent);
+      this._renderPopup();
+    }
   }
 }
