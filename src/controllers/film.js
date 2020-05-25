@@ -299,11 +299,8 @@ export default class FilmController {
       window.removeEventListener(`offline`, this._onOffline);
       window.removeEventListener(`online`, this._onOnline);
       this._filmPopupComponent.removeOnlineChangeHandler();
-      // this._filmsModel.setChangedFilm(this._film);
-      // this.rerenderPopup();
-
-      remove(this._filmPopupComponent);
-      this._renderPopup();
+      this._filmsModel.setChangedFilm(this._film);
+      this.rerenderPopup();
     }
   }
 }
